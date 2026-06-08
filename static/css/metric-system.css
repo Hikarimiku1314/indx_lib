@@ -1,0 +1,89 @@
+/**
+ * 指标体系样式
+ * 包含：指标树、树节点、树子项
+ */
+
+/* 指标树 */
+.metric-tree {
+    list-style: none;
+}
+
+.tree-node {
+    margin-bottom: 8px;
+}
+
+.tree-node-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tree-node-header:hover {
+    background: #e9ecef;
+}
+
+.tree-node-header i {
+    margin-right: 10px;
+    color: #4a90d9;
+    transition: transform 0.3s ease;
+}
+
+.tree-node-header.expanded i {
+    transform: rotate(90deg);
+}
+
+.tree-node-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.tree-children {
+    list-style: none;
+    margin-left: 20px;
+    margin-top: 8px;
+    display: none;
+}
+
+.tree-children.expanded {
+    display: block;
+}
+
+.tree-child-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tree-child-item:hover {
+    background: #f0f4f8;
+}
+
+.tree-child-name {
+    flex: 1;
+}
+
+.tree-child-value {
+    color: #4a90d9;
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+.tree-child-trend {
+    font-size: 12px;
+}
+
+.tree-child-trend.up {
+    color: #7ed321;
+}
+
+.tree-child-trend.down {
+    color: #ff6b6b;
+}

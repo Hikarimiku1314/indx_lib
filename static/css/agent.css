@@ -1,0 +1,131 @@
+/**
+ * 智能应用样式
+ * 包含：智能问答面板、智能卡片、智能解读
+ */
+
+/* 智能应用 */
+.agent-panel {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    padding: 30px;
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.agent-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.agent-subtitle {
+    opacity: 0.9;
+    margin-bottom: 20px;
+}
+
+.agent-input {
+    display: flex;
+    gap: 10px;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.agent-input-box {
+    flex: 1;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.agent-input-box:focus {
+    outline: none;
+}
+
+.agent-input-btn {
+    padding: 12px 24px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.agent-input-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.agent-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.agent-card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.agent-card-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 15px;
+    color: white;
+    font-size: 24px;
+}
+
+.agent-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 8px;
+}
+
+.agent-card-desc {
+    color: #8898aa;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.agent-interpretation {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.interpretation-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.interpretation-header i {
+    margin-right: 10px;
+    color: #4a90d9;
+}
+
+.interpretation-title {
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.interpretation-content {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    line-height: 1.8;
+    color: #5a6c7d;
+    font-size: 14px;
+}

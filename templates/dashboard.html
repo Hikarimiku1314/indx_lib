@@ -1,0 +1,243 @@
+<div id="page-dashboard" class="page-section">
+    <!-- 顶部核心KPI -->
+    <div class="dashboard-kpi-row">
+        <div class="kpi-card kpi-primary">
+            <div class="kpi-icon"><i class="fas fa-chart-line"></i></div>
+            <div class="kpi-content">
+                <div class="kpi-label">综合盈利指数</div>
+                <div class="kpi-value">87.5<span class="kpi-unit">%</span></div>
+                <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> 同比 +5.2%</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-success">
+            <div class="kpi-icon"><i class="fas fa-users"></i></div>
+            <div class="kpi-content">
+                <div class="kpi-label">客户满意度</div>
+                <div class="kpi-value">92.1<span class="kpi-unit">%</span></div>
+                <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> 环比 +1.5%</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-warning">
+            <div class="kpi-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="kpi-content">
+                <div class="kpi-label">风险控制指数</div>
+                <div class="kpi-value">78.3<span class="kpi-unit">%</span></div>
+                <div class="kpi-trend down"><i class="fas fa-arrow-down"></i> 环比 -0.8%</div>
+            </div>
+        </div>
+        <div class="kpi-card kpi-info">
+            <div class="kpi-icon"><i class="fas fa-yen-sign"></i></div>
+            <div class="kpi-content">
+                <div class="kpi-label">本月营收(亿)</div>
+                <div class="kpi-value">158.6</div>
+                <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> 同比 +11.3%</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 中部图表区 -->
+    <div class="dashboard-chart-row">
+        <div class="chart-card chart-large">
+            <div class="chart-header">
+                <h3 class="chart-title">核心指标趋势</h3>
+                <div class="chart-tabs">
+                    <span class="chart-tab active">近7天</span>
+                    <span class="chart-tab">近30天</span>
+                    <span class="chart-tab">近1年</span>
+                </div>
+            </div>
+            <div class="chart-body">
+                <div id="chart-trend" class="chart-placeholder">
+                    <svg viewBox="0 0 600 200" preserveAspectRatio="none" style="width: 100%; height: 200px;">
+                        <defs>
+                            <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#667eea;stop-opacity:0.4" />
+                                <stop offset="100%" style="stop-color:#667eea;stop-opacity:0" />
+                            </linearGradient>
+                        </defs>
+                        <path d="M 0,150 L 50,120 L 100,130 L 150,100 L 200,110 L 250,80 L 300,90 L 350,60 L 400,70 L 450,50 L 500,40 L 550,30 L 600,20 L 600,200 L 0,200 Z" fill="url(#grad1)"/>
+                        <polyline points="0,150 50,120 100,130 150,100 200,110 250,80 300,90 350,60 400,70 450,50 500,40 550,30 600,20" fill="none" stroke="#667eea" stroke-width="2.5"/>
+                        <polyline points="0,170 50,160 100,150 150,145 200,140 250,130 300,120 350,110 400,100 450,95 500,90 550,85 600,80" fill="none" stroke="#48bb78" stroke-width="2.5" stroke-dasharray="4,2"/>
+                    </svg>
+                    <div class="chart-legend">
+                        <span><i style="background:#667eea"></i> 净利润</span>
+                        <span><i style="background:#48bb78"></i> 营收</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chart-card chart-small">
+            <div class="chart-header">
+                <h3 class="chart-title">业务结构</h3>
+            </div>
+            <div class="chart-body">
+                <div class="pie-legend-container">
+                    <svg viewBox="0 0 120 120" class="pie-chart">
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#667eea" stroke-width="20" stroke-dasharray="125 314" transform="rotate(-90 60 60)"/>
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#48bb78" stroke-width="20" stroke-dasharray="94 314" stroke-dashoffset="-125" transform="rotate(-90 60 60)"/>
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#ed8936" stroke-width="20" stroke-dasharray="62 314" stroke-dashoffset="-219" transform="rotate(-90 60 60)"/>
+                        <circle cx="60" cy="60" r="50" fill="none" stroke="#f56565" stroke-width="20" stroke-dasharray="33 314" stroke-dashoffset="-281" transform="rotate(-90 60 60)"/>
+                    </svg>
+                    <ul class="pie-legend">
+                        <li><span class="legend-color" style="background:#667eea"></span> 银行业务 <strong>40%</strong></li>
+                        <li><span class="legend-color" style="background:#48bb78"></span> 保险业务 <strong>30%</strong></li>
+                        <li><span class="legend-color" style="background:#ed8936"></span> 财富管理 <strong>20%</strong></li>
+                        <li><span class="legend-color" style="background:#f56565"></span> 其他 <strong>10%</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下部状态区 -->
+    <div class="dashboard-status-row">
+        <div class="status-card">
+            <div class="status-card-header">
+                <h4 class="status-card-title">
+                    <i class="fas fa-bell" style="color:#ed8936"></i>
+                    实时预警
+                </h4>
+                <span class="status-badge danger">3</span>
+            </div>
+            <ul class="status-list">
+                <li class="status-item status-danger">
+                    <span class="status-dot"></span>
+                    <div class="status-item-content">
+                        <div class="status-item-title">某分行不良贷款率超阈值</div>
+                        <div class="status-item-meta">5分钟前 · 风险指标</div>
+                    </div>
+                </li>
+                <li class="status-item status-warning">
+                    <span class="status-dot"></span>
+                    <div class="status-item-content">
+                        <div class="status-item-title">流动性比率接近预警线</div>
+                        <div class="status-item-meta">15分钟前 · 流动性</div>
+                    </div>
+                </li>
+                <li class="status-item status-warning">
+                    <span class="status-dot"></span>
+                    <div class="status-item-content">
+                        <div class="status-item-title">数据质量检查发现5条异常</div>
+                        <div class="status-item-meta">1小时前 · 质量</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="status-card">
+            <div class="status-card-header">
+                <h4 class="status-card-title">
+                    <i class="fas fa-tasks" style="color:#667eea"></i>
+                    待办任务
+                </h4>
+                <span class="status-badge primary">5</span>
+            </div>
+            <ul class="status-list">
+                <li class="status-item">
+                    <span class="status-dot"></span>
+                    <div class="status-item-content">
+                        <div class="status-item-title">审批: 成本收入比指标发布</div>
+                        <div class="status-item-meta">赵六 提交 · 等待中</div>
+                    </div>
+                </li>
+                <li class="status-item">
+                    <span class="status-dot"></span>
+                    <div class="status-item-content">
+                        <div class="status-item-title">审批: 存贷比指标上线</div>
+                        <div class="status-item-meta">李四 提交 · 等待中</div>
+                    </div>
+                </li>
+                <li class="status-item">
+                    <span class="status-dot"></span>
+                    <div class="status-item-content">
+                        <div class="status-item-title">权限申请: 客户流失率指标</div>
+                        <div class="status-item-meta">王五 申请 · 待审批</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <div class="status-card">
+            <div class="status-card-header">
+                <h4 class="status-card-title">
+                    <i class="fas fa-chart-bar" style="color:#48bb78"></i>
+                    指标健康度
+                </h4>
+                <span class="status-badge success">良好</span>
+            </div>
+            <div class="health-overview">
+                <div class="health-item">
+                    <div class="health-circle health-excellent" style="--p:85">
+                        <span>85%</span>
+                    </div>
+                    <div class="health-label">原子指标</div>
+                </div>
+                <div class="health-item">
+                    <div class="health-circle health-good" style="--p:72">
+                        <span>72%</span>
+                    </div>
+                    <div class="health-label">派生指标</div>
+                </div>
+                <div class="health-item">
+                    <div class="health-circle health-normal" style="--p:55">
+                        <span>55%</span>
+                    </div>
+                    <div class="health-label">复合指标</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部指标快览 -->
+    <div class="dashboard-quick-row">
+        <div class="quick-card">
+            <div class="quick-card-header">
+                <span class="quick-label">净利润率</span>
+                <span class="quick-trend up">+1.2%</span>
+            </div>
+            <div class="quick-value">15.2%</div>
+            <div class="quick-bar"><div class="quick-bar-fill" style="width:76%; background:linear-gradient(90deg,#667eea,#764ba2)"></div></div>
+        </div>
+        <div class="quick-card">
+            <div class="quick-card-header">
+                <span class="quick-label">不良贷款率</span>
+                <span class="quick-trend down">+0.3%</span>
+            </div>
+            <div class="quick-value">1.8%</div>
+            <div class="quick-bar"><div class="quick-bar-fill" style="width:18%; background:linear-gradient(90deg,#f56565,#ed8936)"></div></div>
+        </div>
+        <div class="quick-card">
+            <div class="quick-card-header">
+                <span class="quick-label">ROE</span>
+                <span class="quick-trend up">+0.5%</span>
+            </div>
+            <div class="quick-value">12.8%</div>
+            <div class="quick-bar"><div class="quick-bar-fill" style="width:64%; background:linear-gradient(90deg,#48bb78,#38a169)"></div></div>
+        </div>
+        <div class="quick-card">
+            <div class="quick-card-header">
+                <span class="quick-label">流动性比率</span>
+                <span class="quick-trend up">+3.2%</span>
+            </div>
+            <div class="quick-value">58.6%</div>
+            <div class="quick-bar"><div class="quick-bar-fill" style="width:58%; background:linear-gradient(90deg,#4299e1,#3182ce)"></div></div>
+        </div>
+        <div class="quick-card">
+            <div class="quick-card-header">
+                <span class="quick-label">保费收入(亿)</span>
+                <span class="quick-trend up">+15.3%</span>
+            </div>
+            <div class="quick-value">320</div>
+            <div class="quick-bar"><div class="quick-bar-fill" style="width:80%; background:linear-gradient(90deg,#ed8936,#dd6b20)"></div></div>
+        </div>
+        <div class="quick-card">
+            <div class="quick-card-header">
+                <span class="quick-label">成本收入比</span>
+                <span class="quick-trend down">-2.0%</span>
+            </div>
+            <div class="quick-value">28.5%</div>
+            <div class="quick-bar"><div class="quick-bar-fill" style="width:28%; background:linear-gradient(90deg,#9f7aea,#805ad5)"></div></div>
+        </div>
+    </div>
+</div>

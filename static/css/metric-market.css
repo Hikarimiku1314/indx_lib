@@ -1,0 +1,304 @@
+/**
+ * 指标市场样式
+ * 包含：市场布局、市场卡片、对比弹窗、选中指标面板
+ */
+
+/* 指标市场布局 */
+.market-layout {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 140px);
+}
+
+.market-left {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.market-right {
+    width: 280px;
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+}
+
+.market-right.has-selection {
+    width: 320px;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.panel-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.selected-metrics-count {
+    font-size: 13px;
+    color: #8898aa;
+    margin-bottom: 10px;
+}
+
+.selected-metrics-list {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.empty-selected-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #8898aa;
+}
+
+.empty-selected-state i {
+    font-size: 36px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.empty-selected-state p {
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.selected-metric-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.selected-metric-item:hover {
+    background: #f0f4f8;
+}
+
+.selected-metric-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.selected-metric-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: #2c3e50;
+    margin-bottom: 4px;
+}
+
+.selected-metric-category {
+    font-size: 11px;
+    color: #8898aa;
+}
+
+.selected-metric-remove {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #ff6b6b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.selected-metric-remove:hover {
+    background: #e53e3e;
+    transform: scale(1.1);
+}
+
+.panel-footer {
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+/* 指标市场卡片 */
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+}
+
+.market-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.market-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.market-card.selected {
+    border: 2px solid #667eea;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+}
+
+.market-card.selected .market-card-title {
+    color: #667eea;
+}
+
+.market-card.dragging {
+    opacity: 0.5;
+    transform: scale(1.05);
+}
+
+.market-right.drag-over {
+    border: 2px dashed #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.market-card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.market-card-actions .btn {
+    flex: 1;
+    font-size: 12px;
+    padding: 6px 10px;
+}
+
+.market-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.market-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.market-category {
+    padding: 4px 10px;
+    background: #e8f5fd;
+    color: #1e88e5;
+    border-radius: 12px;
+    font-size: 12px;
+}
+
+.market-card-desc {
+    color: #8898aa;
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.market-card-time {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.market-card-time .time-item {
+    display: flex;
+    align-items: center;
+    font-size: 12px;
+    color: #6a7c8e;
+}
+
+.market-card-time .time-item i {
+    margin-right: 6px;
+    font-size: 11px;
+    color: #95a5a6;
+}
+
+.market-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.market-popularity {
+    display: flex;
+    align-items: center;
+    color: #ff9800;
+}
+
+.market-popularity i {
+    margin-right: 4px;
+}
+
+/* 对比弹窗样式 */
+.comparison-container {
+    padding: 10px;
+}
+
+.comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.comparison-table th,
+.comparison-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.comparison-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.comparison-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* 对比图表区域 */
+.comparison-chart-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+/* 未授权提示 */
+.unauthorized-notice {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 30px;
+    background-color: #fef3cd;
+    border-radius: 8px;
+    color: #856404;
+    font-size: 14px;
+}
+
+.unauthorized-notice i {
+    font-size: 18px;
+    color: #ffc107;
+}

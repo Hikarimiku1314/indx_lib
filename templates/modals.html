@@ -1,0 +1,198 @@
+{% block modals %}
+<!-- 指标详情弹窗 -->
+<div class="modal-overlay" id="detail-modal">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h3 class="modal-title" id="detail-title">指标详情</h3>
+            <span class="modal-close" onclick="closeModal('detail-modal')">&times;</span>
+        </div>
+        <div class="modal-body" id="detail-content"></div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('detail-modal')">关闭</button>
+        </div>
+    </div>
+</div>
+
+<!-- 指标对比弹窗 -->
+<div class="modal-overlay" id="comparison-modal">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h3 class="modal-title" id="comparison-title">指标对比</h3>
+            <span class="modal-close" onclick="closeModal('comparison-modal')">&times;</span>
+        </div>
+        <div class="modal-body" id="comparison-content"></div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('comparison-modal')">关闭</button>
+        </div>
+    </div>
+</div>
+
+<!-- 新增指标弹窗 -->
+<div class="modal-overlay" id="add-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">新增指标</h3>
+            <span class="modal-close" onclick="closeModal('add-modal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="add-metric-form">
+                <div class="form-group">
+                    <label>指标名称</label>
+                    <input type="text" class="form-control" id="add-name" required>
+                </div>
+                <div class="form-group">
+                    <label>指标类型</label>
+                    <select class="form-control" id="add-type" required>
+                        <option value="原子指标">原子指标</option>
+                        <option value="派生指标">派生指标</option>
+                        <option value="复合指标">复合指标</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>单位</label>
+                    <input type="text" class="form-control" id="add-unit" placeholder="如：%、元、分">
+                </div>
+                <div class="form-group">
+                    <label>业务口径</label>
+                    <textarea class="form-control" id="add-caliber" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>负责人</label>
+                    <input type="text" class="form-control" id="add-owner">
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('add-modal')">取消</button>
+            <button class="btn btn-primary" onclick="saveMetric()">保存</button>
+        </div>
+    </div>
+</div>
+
+<!-- LLM配置弹窗 -->
+<div class="modal-overlay" id="llm-config-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">大模型配置</h3>
+            <span class="modal-close" onclick="closeModal('llm-config-modal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>API Key</label>
+                <input type="password" class="form-control" id="llm-api-key" placeholder="请输入API Key">
+            </div>
+            <div class="form-group">
+                <label>API地址</label>
+                <input type="text" class="form-control" id="llm-api-url" placeholder="https://api.example.com/v1">
+            </div>
+            <div class="form-group">
+                <label>模型名称</label>
+                <input type="text" class="form-control" id="llm-model" placeholder="如：gpt-4">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('llm-config-modal')">取消</button>
+            <button class="btn btn-primary" onclick="saveLLMConfig()">保存配置</button>
+        </div>
+    </div>
+</div>
+
+<!-- 质量规则配置弹窗 -->
+<div class="modal-overlay" id="quality-config-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">质量检查规则配置</h3>
+            <span class="modal-close" onclick="closeModal('quality-config-modal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>空值阈值 (%)</label>
+                <input type="number" class="form-control" id="quality-null-threshold" value="5" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label>异常值阈值 (%)</label>
+                <input type="number" class="form-control" id="quality-anomaly-threshold" value="3" min="0" max="100">
+            </div>
+            <div class="form-group">
+                <label>数据延迟阈值 (小时)</label>
+                <input type="number" class="form-control" id="quality-delay-threshold" value="24" min="1">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('quality-config-modal')">取消</button>
+            <button class="btn btn-primary" onclick="saveQualityConfig()">保存配置</button>
+        </div>
+    </div>
+</div>
+
+<!-- 质量检查详情弹窗 -->
+<div class="modal-overlay" id="quality-detail-modal">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h3 class="modal-title" id="quality-detail-title">质量检查详情</h3>
+            <span class="modal-close" onclick="closeModal('quality-detail-modal')">&times;</span>
+        </div>
+        <div class="modal-body" id="quality-detail-content">
+            <!-- 动态内容 -->
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('quality-detail-modal')">关闭</button>
+            <button class="btn btn-primary" onclick="viewMetricDetailFromQuality()">查看指标详情</button>
+        </div>
+    </div>
+</div>
+
+<!-- 报告生成弹窗 -->
+<div class="modal-overlay" id="report-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">生成报告</h3>
+            <span class="modal-close" onclick="closeModal('report-modal')">&times;</span>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>报告标题</label>
+                <input type="text" class="form-control" id="report-title" placeholder="请输入报告标题">
+            </div>
+            <div class="form-group">
+                <label>报告类型</label>
+                <select class="form-control" id="report-type">
+                    <option value="summary">摘要报告</option>
+                    <option value="detailed">详细报告</option>
+                    <option value="trend">趋势分析报告</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>包含指标（多选）</label>
+                <select class="form-control" id="report-metrics" multiple style="height: 120px;">
+                    <option value="m001">净利润率</option>
+                    <option value="m002">ROE</option>
+                    <option value="m005">不良贷款率</option>
+                    <option value="m009">流动性比率</option>
+                    <option value="m014">中间业务收入</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('report-modal')">取消</button>
+            <button class="btn btn-primary" onclick="generateReport()">生成报告</button>
+        </div>
+    </div>
+</div>
+
+<!-- 数据预览弹窗 -->
+<div class="modal-overlay" id="data-preview-modal">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h3 class="modal-title" id="data-preview-title">数据预览</h3>
+            <span class="modal-close" onclick="closeModal('data-preview-modal')">&times;</span>
+        </div>
+        <div class="modal-body" id="data-preview-content">
+            <div class="loading-spinner">加载中...</div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('data-preview-modal')">关闭</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

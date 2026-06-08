@@ -1,0 +1,25 @@
+<!-- 智能预警页面 -->
+<div id="page-alert" class="page-section" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
+                预警规则
+            </h2>
+        </div>
+        <ul class="alert-list" id="alert-list"></ul>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                质量检查
+            </h2>
+            <button class="btn btn-primary btn-sm" onclick="showQualityRuleConfig()">
+                <i class="fas fa-cog"></i> 配置规则
+            </button>
+        </div>
+        <div class="quality-grid" id="quality-grid"></div>
+    </div>
+</div>

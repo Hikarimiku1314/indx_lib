@@ -1,0 +1,36 @@
+/**
+ * 主样式文件
+ * 导入所有模块化的CSS文件
+ * 
+ * 文件结构说明：
+ * - base.css        : 基础样式（重置、布局、侧边栏、主内容区）
+ * - components.css  : 通用组件（卡片、按钮、表格、弹窗、表单）
+ * - dashboard.css   : 管理驾驶舱样式
+ * - metric-system.css : 指标体系样式
+ * - metric-center.css : 指标中心样式
+ * - metric-market.css : 指标市场样式
+ * - bloodline.css   : 指标血缘样式
+ * - alert.css       : 智能预警样式
+ * - agent.css       : 智能应用样式
+ * - detail.css      : 指标详情样式
+ * - responsive.css  : 响应式样式
+ */
+
+/* 基础样式 */
+@import url('base.css');
+
+/* 通用组件 */
+@import url('components.css');
+
+/* 页面模块样式 */
+@import url('dashboard.css');
+@import url('metric-system.css');
+@import url('metric-center.css');
+@import url('metric-market.css');
+@import url('bloodline.css');
+@import url('alert.css');
+@import url('agent.css');
+@import url('detail.css');
+
+/* 响应式样式 */
+@import url('responsive.css');

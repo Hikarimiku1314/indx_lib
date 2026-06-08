@@ -1,0 +1,51 @@
+/**
+ * 响应式样式
+ * 包含：移动端适配、平板适配
+ */
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+        padding: 15px 10px;
+    }
+    
+    .logo, .menu-item span {
+        display: none;
+    }
+    
+    .menu-item {
+        justify-content: center;
+        padding: 12px;
+    }
+    
+    .menu-item i {
+        margin-right: 0;
+    }
+    
+    .north-star-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+}
+
+/* 平板适配 */
+@media (max-width: 1024px) {
+    .dashboard-kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .dashboard-chart-row { grid-template-columns: 1fr; }
+    .dashboard-status-row { grid-template-columns: 1fr; }
+    .dashboard-quick-row { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* 小屏幕适配 */
+@media (max-width: 640px) {
+    .dashboard-kpi-row { grid-template-columns: 1fr; }
+    .dashboard-quick-row { grid-template-columns: repeat(2, 1fr); }
+}

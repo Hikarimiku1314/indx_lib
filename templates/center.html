@@ -1,0 +1,71 @@
+<div id="page-center" class="page-section" style="display: none;">
+    <div class="category-nav" id="category-nav">
+        <div class="category-nav-item active" data-category="all" onclick="switchCategory('all', this)">
+            <i class="fas fa-th"></i>
+            <span>全部</span>
+            <span class="category-nav-count" id="cat-count-all">0</span>
+        </div>
+        <div class="category-nav-item" data-category="profit" onclick="switchCategory('profit', this)">
+            <i class="fas fa-chart-line"></i>
+            <span>盈利能力</span>
+            <span class="category-nav-count" id="cat-count-profit">0</span>
+        </div>
+        <div class="category-nav-item" data-category="risk" onclick="switchCategory('risk', this)">
+            <i class="fas fa-shield-alt"></i>
+            <span>风险指标</span>
+            <span class="category-nav-count" id="cat-count-risk">0</span>
+        </div>
+        <div class="category-nav-item" data-category="growth" onclick="switchCategory('growth', this)">
+            <i class="fas fa-rocket"></i>
+            <span>发展能力</span>
+            <span class="category-nav-count" id="cat-count-growth">0</span>
+        </div>
+        <div class="category-nav-item" data-category="efficiency" onclick="switchCategory('efficiency', this)">
+            <i class="fas fa-cogs"></i>
+            <span>经营效率</span>
+            <span class="category-nav-count" id="cat-count-efficiency">0</span>
+        </div>
+        <div class="category-nav-item" data-category="capital" onclick="switchCategory('capital', this)">
+            <i class="fas fa-university"></i>
+            <span>资本充足</span>
+            <span class="category-nav-count" id="cat-count-capital">0</span>
+        </div>
+        <div class="category-nav-item" data-category="liquidity" onclick="switchCategory('liquidity', this)">
+            <i class="fas fa-water"></i>
+            <span>流动性</span>
+            <span class="category-nav-count" id="cat-count-liquidity">0</span>
+        </div>
+        <div class="category-nav-item" data-category="market" onclick="switchCategory('market', this)">
+            <i class="fas fa-store"></i>
+            <span>市场表现</span>
+            <span class="category-nav-count" id="cat-count-market">0</span>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title" id="center-title">指标列表</h2>
+            <div>
+                <span class="status-tag status-published" id="filter-status-tag" style="margin-right: 10px;"></span>
+                <button class="btn btn-primary" onclick="showAddMetricModal()">
+                    <i class="fas fa-plus" style="margin-right: 5px;"></i>
+                    新增指标
+                </button>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="data-table" id="metrics-table">
+                <thead>
+                    <tr>
+                        <th>指标名称</th>
+                        <th>类型</th>
+                        <th>负责人</th>
+                        <th>统计周期</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,54 @@
+<div id="page-market" class="page-section" style="display: none;">
+    <div class="market-layout">
+        <!-- 左侧指标卡片区域 -->
+        <div class="market-left">
+            <div class="filter-bar">
+                <input type="text" class="search-box" id="market-search" placeholder="搜索指标...">
+                <select class="form-control form-select" id="market-category" style="width: auto;">
+                    <option value="全部">全部分类</option>
+                    <option value="客户分析">客户分析</option>
+                    <option value="产品分析">产品分析</option>
+                    <option value="渠道分析">渠道分析</option>
+                    <option value="风险管理">风险管理</option>
+                    <option value="营销分析">营销分析</option>
+                    <option value="资金管理">资金管理</option>
+                    <option value="合规管理">合规管理</option>
+                    <option value="人力资源">人力资源</option>
+                    <option value="财务指标">财务指标</option>
+                </select>
+                <button class="btn btn-primary" onclick="searchMarket()">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            <div class="market-grid" id="market-grid"></div>
+        </div>
+
+        <!-- 右侧对比面板 -->
+        <div class="market-right" id="comparison-panel">
+            <div class="panel-header">
+                <h3 class="panel-title">
+                    <i class="fas fa-chart-line" style="margin-right: 8px;"></i>
+                    指标对比
+                </h3>
+                <button class="btn btn-secondary btn-sm" onclick="clearMetricSelection()">
+                    <i class="fas fa-times"></i> 清空
+                </button>
+            </div>
+
+            <div class="selected-metrics-count" id="selected-count-display">已选 0 个指标（最多5个）</div>
+
+            <div class="selected-metrics-list" id="selected-metrics-list">
+                <div class="empty-selected-state">
+                    <i class="fas fa-hand-pointer"></i>
+                    <p>勾选或拖拽指标卡片<br>到此处添加对比</p>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <button class="btn btn-primary" onclick="openComparisonPage()" id="open-compare-btn" disabled>
+                    <i class="fas fa-balance-scale"></i> 打开对比
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

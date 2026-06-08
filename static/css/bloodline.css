@@ -1,0 +1,357 @@
+/**
+ * 指标血缘样式
+ * 包含：血缘视图、血缘详情视图、力导向图
+ */
+
+/* 血缘容器 */
+.bloodline-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.bloodline-section {
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.bloodline-section.upstream {
+    background: #f0f9ff;
+}
+
+.bloodline-section.downstream {
+    background: #f0fff4;
+}
+
+.bloodline-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.bloodline-section.upstream .bloodline-section-title {
+    color: #0288d1;
+}
+
+.bloodline-section.downstream .bloodline-section-title {
+    color: #388e3c;
+}
+
+.bloodline-section-title i {
+    margin-right: 8px;
+}
+
+.bloodline-item {
+    background: white;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.bloodline-item-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.bloodline-item-type {
+    padding: 2px 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    font-size: 11px;
+    margin-right: 10px;
+}
+
+.bloodline-item-name {
+    font-weight: 500;
+    color: #2c3e50;
+}
+
+.bloodline-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.bloodline-field-tag {
+    padding: 4px 10px;
+    background: rgba(74, 144, 217, 0.1);
+    color: #4a90d9;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.bloodline-arrow {
+    text-align: center;
+    color: #999;
+    font-size: 24px;
+}
+
+/* 力导向图 */
+.bloodline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    position: relative;  /* 添加相对定位作为信息面板的定位参考 */
+}
+
+.bloodline-canvas-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+#bloodline-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+.canvas-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.bloodline-info-panel {
+    position: absolute;
+    top: 15px;   /* 相对于画布容器顶部 */
+    right: 15px; /* 相对于画布容器右侧 */
+    width: 260px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 20;  /* 在画布之上，但不影响外部元素 */
+    display: none;
+    overflow: hidden;
+    max-height: 350px;
+    overflow-y: auto;
+}
+
+.bloodline-info-panel.show {
+    display: block;
+}
+
+.info-panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.info-panel-header h4 {
+    margin: 0;
+    font-size: 14px;
+}
+
+.close-btn {
+    font-size: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+.info-panel-content {
+    padding: 15px;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.info-row:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.info-label {
+    font-size: 12px;
+    color: #8898aa;
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 13px;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+.info-fields {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.info-fields-title {
+    font-size: 12px;
+    color: #8898aa;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.info-field-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+}
+
+/* 操作按钮样式 */
+.info-actions {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.info-actions .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.3s ease;
+}
+
+.info-actions .btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.info-actions .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.bloodline-legend {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    padding: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #5a6c7d;
+}
+
+.legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+/* 缩放控件 */
+.zoom-controls {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+    z-index: 5;
+}
+
+.zoom-btn {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #5a6c7d;
+    transition: all 0.2s ease;
+}
+
+.zoom-btn:hover {
+    background: #f0f4f8;
+    color: #667eea;
+}
+
+.zoom-btn:active {
+    background: #e0e6ed;
+}
+
+.zoom-level {
+    padding: 6px 0;
+    text-align: center;
+    font-size: 11px;
+    color: #8898aa;
+    font-weight: 500;
+}
+
+#zoom-value {
+    min-width: 40px;
+    display: inline-block;
+}
+
+.detail-bloodline-item:hover {
+    background-color: #f0f4f8;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+#data-preview-content table tbody tr:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .bloodline-canvas-container {
+        height: 300px;
+    }
+    
+    .bloodline-info-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+    }
+    
+    .bloodline-legend {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+}

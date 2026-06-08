@@ -1,0 +1,62 @@
+/**
+ * 指标中心样式
+ * 包含：分类导航
+ */
+
+/* 分类导航 */
+.category-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+.category-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    color: #666;
+}
+
+.category-nav-item:hover {
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+}
+
+.category-nav-item.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+}
+
+.category-nav-item i {
+    font-size: 14px;
+}
+
+.category-nav-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 11px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.category-nav-item.active .category-nav-count {
+    background: rgba(255, 255, 255, 0.2);
+}

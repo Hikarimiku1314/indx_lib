@@ -1,0 +1,64 @@
+<!-- 指标血缘页面 -->
+<div id="page-bloodline" class="page-section" style="display: none;">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">指标血缘视图</h2>
+            <select class="form-control form-select" id="bloodline-select" style="width: auto;" onchange="loadBloodline(this.value)">
+                <option value="all" selected>全部指标</option>
+                <option value="m001">净利润率</option>
+                <option value="m002">ROE</option>
+                <option value="m005">不良贷款率</option>
+                <option value="m006">拨备覆盖率</option>
+                <option value="m009">流动性比率</option>
+                <option value="m014">中间业务收入</option>
+                <option value="m015">保费收入</option>
+            </select>
+        </div>
+        <div class="bloodline-content">
+            <div class="bloodline-canvas-container">
+                <canvas id="bloodline-canvas"></canvas>
+                <div class="canvas-overlay" id="canvas-overlay"></div>
+                
+                <!-- 缩放控件 -->
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="zoomIn()" title="放大">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <div class="zoom-level">
+                        <span id="zoom-value">100%</span>
+                    </div>
+                    <button class="zoom-btn" onclick="zoomOut()" title="缩小">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="zoom-btn" onclick="resetZoom()" title="重置">
+                        <i class="fas fa-home"></i>
+                    </button>
+                </div>
+                
+                <!-- 信息面板放在画布容器内部 -->
+                <div class="bloodline-info-panel" id="bloodline-info-panel">
+                    <div class="info-panel-header">
+                        <h4>节点信息</h4>
+                        <span class="close-btn" onclick="closeInfoPanel()">&times;</span>
+                    </div>
+                    <div class="info-panel-content" id="info-panel-content"></div>
+                </div>
+            </div>
+            <div class="bloodline-legend">
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #667eea;"></span>
+                    <span>核心指标</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #48bb78;"></span>
+                    <span>上游数据源</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-dot" style="background: #ed8936;"></span>
+                    <span>下游应用</span>
+                </div>
+            </div>
+        </div>
+        <div class="bloodline-container" id="bloodline-container" style="display: none;"></div>
+    </div>
+</div>

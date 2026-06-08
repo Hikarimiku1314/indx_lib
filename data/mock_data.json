@@ -1,0 +1,1778 @@
+{
+  "north_star_metrics": [
+    {
+      "id": "ns001",
+      "name": "综合盈利指数",
+      "value": 87.5,
+      "unit": "%",
+      "trend": 2.3,
+      "description": "反映银行整体盈利能力的综合指标",
+      "update_time": "2024-01-15"
+    },
+    {
+      "id": "ns002",
+      "name": "客户满意度",
+      "value": 92.1,
+      "unit": "%",
+      "trend": 1.5,
+      "description": "综合客户满意度评分",
+      "update_time": "2024-01-15"
+    },
+    {
+      "id": "ns003",
+      "name": "风险控制指数",
+      "value": 78.3,
+      "unit": "%",
+      "trend": -0.8,
+      "description": "整体风险控制能力评估",
+      "update_time": "2024-01-15"
+    }
+  ],
+  "metric_tree": {
+    "name": "指标体系",
+    "children": [
+      {
+        "name": "盈利能力",
+        "children": [
+          {
+            "name": "净利润率",
+            "id": "m001",
+            "value": 15.2,
+            "trend": 1.2
+          },
+          {
+            "name": "ROE",
+            "id": "m002",
+            "value": 12.8,
+            "trend": 0.5
+          },
+          {
+            "name": "ROA",
+            "id": "m003",
+            "value": 1.2,
+            "trend": -0.1
+          },
+          {
+            "name": "成本收入比",
+            "id": "m004",
+            "value": 28.5,
+            "trend": -2.0
+          }
+        ]
+      },
+      {
+        "name": "风险指标",
+        "children": [
+          {
+            "name": "不良贷款率",
+            "id": "m005",
+            "value": 1.8,
+            "trend": 0.3
+          },
+          {
+            "name": "拨备覆盖率",
+            "id": "m006",
+            "value": 185.2,
+            "trend": -5.0
+          },
+          {
+            "name": "资本充足率",
+            "id": "m007",
+            "value": 12.5,
+            "trend": 0.8
+          },
+          {
+            "name": "风险加权资产",
+            "id": "m008",
+            "value": 9860,
+            "unit": "亿"
+          }
+        ]
+      },
+      {
+        "name": "流动性",
+        "children": [
+          {
+            "name": "流动性比率",
+            "id": "m009",
+            "value": 58.6,
+            "trend": 3.2
+          },
+          {
+            "name": "存贷比",
+            "id": "m010",
+            "value": 72.3,
+            "trend": -1.5
+          },
+          {
+            "name": "现金比率",
+            "id": "m011",
+            "value": 25.8,
+            "trend": 2.1
+          }
+        ]
+      },
+      {
+        "name": "银行业务",
+        "children": [
+          {
+            "name": "存款增长率",
+            "id": "m012",
+            "value": 8.5,
+            "trend": 1.3
+          },
+          {
+            "name": "贷款增长率",
+            "id": "m013",
+            "value": 12.1,
+            "trend": 2.5
+          },
+          {
+            "name": "中间业务收入",
+            "id": "m014",
+            "value": 156,
+            "unit": "亿",
+            "trend": 8.2
+          }
+        ]
+      },
+      {
+        "name": "保险业务",
+        "children": [
+          {
+            "name": "保费收入",
+            "id": "m015",
+            "value": 320,
+            "unit": "亿",
+            "trend": 15.3
+          },
+          {
+            "name": "赔付率",
+            "id": "m016",
+            "value": 45.2,
+            "trend": -2.1
+          },
+          {
+            "name": "退保率",
+            "id": "m017",
+            "value": 2.8,
+            "trend": 0.5
+          }
+        ]
+      }
+    ]
+  },
+  "metrics_list": [
+    {
+      "id": "m001",
+      "name": "净利润率",
+      "type": "派生",
+      "status": "审批中",
+      "owner": "张三",
+      "cycle": "月度",
+      "create_time": "2024-01-01"
+    },
+    {
+      "id": "m002",
+      "name": "ROE",
+      "type": "派生",
+      "status": "审批中",
+      "owner": "李四",
+      "cycle": "季度",
+      "create_time": "2024-01-05"
+    },
+    {
+      "id": "m003",
+      "name": "ROA",
+      "type": "派生",
+      "status": "审批中",
+      "owner": "王五",
+      "cycle": "季度",
+      "create_time": "2024-01-08"
+    },
+    {
+      "id": "m004",
+      "name": "成本收入比",
+      "type": "复合",
+      "status": "审批中",
+      "owner": "赵六",
+      "cycle": "月度",
+      "create_time": "2024-01-10"
+    },
+    {
+      "id": "m005",
+      "name": "不良贷款率",
+      "type": "原子",
+      "status": "已发布",
+      "owner": "张三",
+      "cycle": "月度",
+      "create_time": "2023-12-20"
+    },
+    {
+      "id": "m006",
+      "name": "拨备覆盖率",
+      "type": "派生",
+      "status": "已发布",
+      "owner": "李四",
+      "cycle": "月度",
+      "create_time": "2023-12-15"
+    },
+    {
+      "id": "m007",
+      "name": "资本充足率",
+      "type": "复合",
+      "status": "审批中",
+      "owner": "王五",
+      "cycle": "季度",
+      "create_time": "2023-11-01"
+    },
+    {
+      "id": "m008",
+      "name": "风险加权资产",
+      "type": "原子",
+      "status": "已发布",
+      "owner": "赵六",
+      "cycle": "月度",
+      "create_time": "2023-10-15"
+    },
+    {
+      "id": "m009",
+      "name": "流动性比率",
+      "type": "派生",
+      "status": "已发布",
+      "owner": "张三",
+      "cycle": "月度",
+      "create_time": "2023-09-20"
+    },
+    {
+      "id": "m010",
+      "name": "存贷比",
+      "type": "复合",
+      "status": "审批中",
+      "owner": "李四",
+      "cycle": "月度",
+      "create_time": "2024-01-12"
+    },
+    {
+      "id": "m011",
+      "name": "现金比率",
+      "type": "派生",
+      "status": "已发布",
+      "owner": "王五",
+      "cycle": "月度",
+      "create_time": "2024-01-14"
+    },
+    {
+      "id": "m012",
+      "name": "存款增长率",
+      "type": "派生",
+      "status": "已发布",
+      "owner": "赵六",
+      "cycle": "月度",
+      "create_time": "2024-01-13"
+    },
+    {
+      "id": "m013",
+      "name": "贷款增长率",
+      "type": "派生",
+      "status": "已发布",
+      "owner": "张三",
+      "cycle": "月度",
+      "create_time": "2024-01-11"
+    },
+    {
+      "id": "m014",
+      "name": "中间业务收入",
+      "type": "原子",
+      "status": "已发布",
+      "owner": "李四",
+      "cycle": "月度",
+      "create_time": "2024-01-09"
+    },
+    {
+      "id": "m015",
+      "name": "保费收入",
+      "type": "原子",
+      "status": "已发布",
+      "owner": "王五",
+      "cycle": "月度",
+      "create_time": "2024-01-07"
+    },
+    {
+      "id": "m016",
+      "name": "赔付率",
+      "type": "派生",
+      "status": "已发布",
+      "owner": "赵六",
+      "cycle": "月度",
+      "create_time": "2024-01-06"
+    },
+    {
+      "id": "m017",
+      "name": "退保率",
+      "type": "派生",
+      "status": "已发布",
+      "owner": "张三",
+      "cycle": "月度",
+      "create_time": "2024-01-04"
+    },
+    {
+      "id": "m018",
+      "name": "总资产",
+      "type": "原子指标",
+      "status": "已发布",
+      "owner": "李四",
+      "cycle": "季度",
+      "create_time": "2024-01-15"
+    },
+    {
+      "id": "m019",
+      "name": "净资产",
+      "type": "派生指标",
+      "status": "已发布",
+      "owner": "王五",
+      "cycle": "季度",
+      "create_time": "2024-01-15"
+    },
+    {
+      "id": "m020",
+      "name": "营业收入",
+      "type": "原子指标",
+      "status": "已发布",
+      "owner": "赵六",
+      "cycle": "月度",
+      "create_time": "2024-01-15"
+    },
+    {
+      "id": "m021",
+      "name": "净利润",
+      "type": "派生指标",
+      "status": "已发布",
+      "owner": "张三",
+      "cycle": "月度",
+      "create_time": "2024-01-15"
+    },
+    {
+      "id": "m022",
+      "name": "资产负债率",
+      "type": "派生指标",
+      "status": "已发布",
+      "owner": "李四",
+      "cycle": "季度",
+      "create_time": "2024-01-15"
+    },
+    {
+      "id": "m023",
+      "name": "流动比率",
+      "type": "派生指标",
+      "status": "已发布",
+      "owner": "王五",
+      "cycle": "月度",
+      "create_time": "2024-01-15"
+    }
+  ],
+  "metric_details": {
+    "m001": {
+      "id": "m001",
+      "name": "净利润率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "净利润与营业收入的比率，反映企业盈利能力",
+      "business_caliber": "归属于母公司股东的净利润 / 营业收入 * 100%",
+      "technical_field": "finance.profit.net_profit / finance.revenue.operating_revenue",
+      "owner": "张三",
+      "department": "财务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "财务报表",
+        "利润表",
+        "营业收入",
+        "净利润"
+      ]
+    },
+    "m002": {
+      "id": "m002",
+      "name": "ROE",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "净资产收益率，衡量股东权益回报",
+      "business_caliber": "净利润 / 平均股东权益 * 100%",
+      "technical_field": "finance.profit.net_profit / finance.equity.average",
+      "owner": "李四",
+      "department": "财务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "季度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "资产负债表",
+        "利润表",
+        "股东权益变动表"
+      ]
+    },
+    "m003": {
+      "id": "m003",
+      "name": "ROA",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "总资产收益率，衡量资产使用效率",
+      "business_caliber": "净利润 / 平均总资产 * 100%",
+      "technical_field": "finance.profit.net_profit / finance.asset.average",
+      "owner": "王五",
+      "department": "财务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "季度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "资产负债表",
+        "利润表",
+        "现金流量表"
+      ]
+    },
+    "m004": {
+      "id": "m004",
+      "name": "成本收入比",
+      "type": "复合指标",
+      "unit": "%",
+      "definition": "营业成本与营业收入的比率",
+      "business_caliber": "营业成本 / 营业收入 * 100%",
+      "technical_field": "finance.cost.operating / finance.revenue.operating",
+      "owner": "赵六",
+      "department": "运营管理部",
+      "update_time": "2024-01-15",
+      "status": "审批中",
+      "cycle": "月度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "成本核算表",
+        "费用明细表",
+        "利润表"
+      ]
+    },
+    "m005": {
+      "id": "m005",
+      "name": "不良贷款率",
+      "type": "原子指标",
+      "unit": "%",
+      "definition": "不良贷款占总贷款的比例，反映信贷资产质量",
+      "business_caliber": "不良贷款余额 / 各项贷款余额 * 100%",
+      "technical_field": "loan.non_performing.amount / loan.total.amount",
+      "owner": "张三",
+      "department": "风险管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "信贷数据仓库",
+      "bloodline": [
+        "贷款台账",
+        "贷款分类表",
+        "客户信息表"
+      ]
+    },
+    "m006": {
+      "id": "m006",
+      "name": "拨备覆盖率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "贷款损失准备与不良贷款的比率",
+      "business_caliber": "贷款损失准备 / 不良贷款余额 * 100%",
+      "technical_field": "risk.provision.amount / loan.non_performing.amount",
+      "owner": "李四",
+      "department": "风险管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "风控数据仓库",
+      "bloodline": [
+        "拨备计提表",
+        "不良贷款统计表",
+        "风险评估表"
+      ]
+    },
+    "m007": {
+      "id": "m007",
+      "name": "资本充足率",
+      "type": "复合指标",
+      "unit": "%",
+      "definition": "核心资本与风险加权资产的比率",
+      "business_caliber": "核心一级资本 / 风险加权资产 * 100%",
+      "technical_field": "capital.core / risk.weighted_assets",
+      "owner": "王五",
+      "department": "资本管理部",
+      "update_time": "2024-01-15",
+      "status": "已下线",
+      "cycle": "季度",
+      "data_source": "资本数据仓库",
+      "bloodline": [
+        "资本构成表",
+        "风险加权资产表",
+        "监管报表"
+      ]
+    },
+    "m008": {
+      "id": "m008",
+      "name": "风险加权资产",
+      "type": "原子指标",
+      "unit": "元",
+      "definition": "根据风险权重计算的资产总额",
+      "business_caliber": "各项资产 * 对应风险权重之和",
+      "technical_field": "risk.weighted_assets.total",
+      "owner": "赵六",
+      "department": "风险管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "风控数据仓库",
+      "bloodline": [
+        "资产分类表",
+        "风险权重表",
+        "资产负债表"
+      ]
+    },
+    "m009": {
+      "id": "m009",
+      "name": "流动性比率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "流动资产与流动负债的比率",
+      "business_caliber": "流动资产 / 流动负债 * 100%",
+      "technical_field": "liquidity.current_asset / liquidity.current_liability",
+      "owner": "张三",
+      "department": "资金管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "资金数据仓库",
+      "bloodline": [
+        "现金流量表",
+        "资产负债表",
+        "资金头寸表"
+      ]
+    },
+    "m010": {
+      "id": "m010",
+      "name": "存贷比",
+      "type": "复合指标",
+      "unit": "%",
+      "definition": "贷款余额与存款余额的比率",
+      "business_caliber": "各项贷款余额 / 各项存款余额 * 100%",
+      "technical_field": "loan.total.amount / deposit.total.amount",
+      "owner": "李四",
+      "department": "资金管理部",
+      "update_time": "2024-01-15",
+      "status": "审批中",
+      "cycle": "月度",
+      "data_source": "核心银行系统",
+      "bloodline": [
+        "存款台账",
+        "贷款台账",
+        "资金平衡表"
+      ]
+    },
+    "m011": {
+      "id": "m011",
+      "name": "现金比率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "现金及现金等价物与流动负债的比率",
+      "business_caliber": "(现金 + 存放同业) / 流动负债 * 100%",
+      "technical_field": "(cash.amount + cash.interbank) / liquidity.current_liability",
+      "owner": "王五",
+      "department": "资金管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "资金数据仓库",
+      "bloodline": [
+        "现金日记账",
+        "存放同业表",
+        "资金头寸表"
+      ]
+    },
+    "m012": {
+      "id": "m012",
+      "name": "存款增长率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "本期存款较上期增长的比率",
+      "business_caliber": "(本期存款 - 上期存款) / 上期存款 * 100%",
+      "technical_field": "(deposit.current - deposit.previous) / deposit.previous",
+      "owner": "赵六",
+      "department": "零售银行部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "核心银行系统",
+      "bloodline": [
+        "存款统计表",
+        "客户账户表",
+        "存款产品表"
+      ]
+    },
+    "m013": {
+      "id": "m013",
+      "name": "贷款增长率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "本期贷款较上期增长的比率",
+      "business_caliber": "(本期贷款 - 上期贷款) / 上期贷款 * 100%",
+      "technical_field": "(loan.current - loan.previous) / loan.previous",
+      "owner": "张三",
+      "department": "公司银行部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "信贷数据仓库",
+      "bloodline": [
+        "贷款统计表",
+        "贷款产品表",
+        "客户授信表"
+      ]
+    },
+    "m014": {
+      "id": "m014",
+      "name": "中间业务收入",
+      "type": "原子指标",
+      "unit": "元",
+      "definition": "非利息收入的主要组成部分",
+      "business_caliber": "手续费及佣金收入 + 投资收益 + 其他业务收入",
+      "technical_field": "revenue.fee + revenue.investment + revenue.other",
+      "owner": "李四",
+      "department": "财富管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "中间业务明细表",
+        "手续费收入表",
+        "投资收益表"
+      ]
+    },
+    "m015": {
+      "id": "m015",
+      "name": "保费收入",
+      "type": "原子指标",
+      "unit": "元",
+      "definition": "保险公司收取的保费总额",
+      "business_caliber": "首年保费 + 续期保费 + 趸缴保费",
+      "technical_field": "insurance.premium.first + insurance.premium.renewal + insurance.premium.single",
+      "owner": "王五",
+      "department": "保险业务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "保险核心系统",
+      "bloodline": [
+        "保单明细表",
+        "保费收入表",
+        "客户投保表"
+      ]
+    },
+    "m016": {
+      "id": "m016",
+      "name": "赔付率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "赔款支出与保费收入的比率",
+      "business_caliber": "赔款支出 / 保费收入 * 100%",
+      "technical_field": "insurance.claim.amount / insurance.premium.amount",
+      "owner": "赵六",
+      "department": "保险业务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "保险核心系统",
+      "bloodline": [
+        "赔款支出表",
+        "保费收入表",
+        "理赔记录表"
+      ]
+    },
+    "m017": {
+      "id": "m017",
+      "name": "退保率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "退保金额与保费收入的比率",
+      "business_caliber": "退保金额 / 保费收入 * 100%",
+      "technical_field": "insurance.surrender.amount / insurance.premium.amount",
+      "owner": "张三",
+      "department": "保险业务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "保险核心系统",
+      "bloodline": [
+        "退保记录表",
+        "保费收入表",
+        "保单状态表"
+      ]
+    },
+    "m018": {
+      "id": "m018",
+      "name": "总资产",
+      "type": "原子指标",
+      "unit": "元",
+      "definition": "企业拥有或控制的全部资产总额",
+      "business_caliber": "流动资产 + 非流动资产",
+      "technical_field": "asset.current + asset.non_current",
+      "owner": "李四",
+      "department": "财务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "季度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "资产负债表",
+        "固定资产台账",
+        "存货明细表"
+      ]
+    },
+    "m019": {
+      "id": "m019",
+      "name": "净资产",
+      "type": "派生指标",
+      "unit": "元",
+      "definition": "企业所有者权益总额",
+      "business_caliber": "总资产 - 总负债",
+      "technical_field": "asset.total - liability.total",
+      "owner": "王五",
+      "department": "财务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "季度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "资产负债表",
+        "股东权益变动表"
+      ]
+    },
+    "m020": {
+      "id": "m020",
+      "name": "营业收入",
+      "type": "原子指标",
+      "unit": "元",
+      "definition": "企业经营业务所取得的收入总额",
+      "business_caliber": "主营业务收入 + 其他业务收入",
+      "technical_field": "revenue.main + revenue.other",
+      "owner": "赵六",
+      "department": "财务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "利润表",
+        "销售收入明细表"
+      ]
+    },
+    "m021": {
+      "id": "m021",
+      "name": "净利润",
+      "type": "派生指标",
+      "unit": "元",
+      "definition": "企业税后利润，反映最终盈利能力",
+      "business_caliber": "利润总额 - 所得税费用",
+      "technical_field": "profit.total - tax.expense",
+      "owner": "张三",
+      "department": "财务部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "利润表",
+        "所得税申报表"
+      ]
+    },
+    "m022": {
+      "id": "m022",
+      "name": "资产负债率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "企业负债总额与资产总额的比率",
+      "business_caliber": "总负债 / 总资产 * 100%",
+      "technical_field": "liability.total / asset.total",
+      "owner": "李四",
+      "department": "风险管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "季度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "资产负债表"
+      ]
+    },
+    "m023": {
+      "id": "m023",
+      "name": "流动比率",
+      "type": "派生指标",
+      "unit": "%",
+      "definition": "流动资产与流动负债的比率",
+      "business_caliber": "流动资产 / 流动负债 * 100%",
+      "technical_field": "asset.current / liability.current",
+      "owner": "王五",
+      "department": "资金管理部",
+      "update_time": "2024-01-15",
+      "status": "已发布",
+      "cycle": "月度",
+      "data_source": "财务数据仓库",
+      "bloodline": [
+        "资产负债表"
+      ]
+    }
+  },
+  "market_metrics": [
+    {
+      "id": "mk001",
+      "name": "客户流失率",
+      "category": "客户分析",
+      "popularity": 95,
+      "unit": "%",
+      "description": "分析客户流失情况",
+      "permission": "审批中",
+      "update_time": "2024-01-15 10:30",
+      "next_update_time": "2024-01-16 10:30"
+    },
+    {
+      "id": "mk002",
+      "name": "产品收益率",
+      "category": "产品分析",
+      "popularity": 88,
+      "unit": "%",
+      "description": "各类产品收益分析",
+      "permission": "审批中",
+      "update_time": "2024-01-15 09:00",
+      "next_update_time": "2024-01-16 09:00"
+    },
+    {
+      "id": "mk003",
+      "name": "渠道转化率",
+      "category": "渠道分析",
+      "popularity": 76,
+      "unit": "%",
+      "description": "各渠道转化效果",
+      "permission": "已授权",
+      "update_time": "2024-01-15 14:20",
+      "next_update_time": "2024-01-16 14:20",
+      "metric_id": "m012"
+    },
+    {
+      "id": "mk004",
+      "name": "风控评分",
+      "category": "风险管理",
+      "popularity": 92,
+      "unit": "分",
+      "description": "客户风险评估评分",
+      "permission": "审批中",
+      "update_time": "2024-01-15 11:45",
+      "next_update_time": "2024-01-15 17:00"
+    },
+    {
+      "id": "mk005",
+      "name": "营销效果",
+      "category": "营销分析",
+      "popularity": 81,
+      "unit": "%",
+      "description": "营销活动效果评估",
+      "permission": "审批中",
+      "update_time": "2024-01-14 16:00",
+      "next_update_time": "2024-01-16 16:00"
+    },
+    {
+      "id": "mk006",
+      "name": "资金流动性",
+      "category": "资金管理",
+      "popularity": 73,
+      "unit": "%",
+      "description": "资金流动性分析",
+      "permission": "已授权",
+      "update_time": "2024-01-15 08:30",
+      "next_update_time": "2024-01-15 20:30",
+      "metric_id": "m009"
+    },
+    {
+      "id": "mk007",
+      "name": "合规指标",
+      "category": "合规管理",
+      "popularity": 68,
+      "unit": "%",
+      "description": "合规风险监测",
+      "permission": "审批中",
+      "update_time": "2024-01-13 10:00",
+      "next_update_time": "2024-01-16 10:00"
+    },
+    {
+      "id": "mk008",
+      "name": "员工绩效",
+      "category": "人力资源",
+      "popularity": 55,
+      "unit": "分",
+      "description": "员工绩效评估",
+      "permission": "审批中",
+      "update_time": "2024-01-12 09:00",
+      "next_update_time": "2024-02-01 09:00"
+    },
+    {
+      "id": "mk009",
+      "name": "净利润率",
+      "category": "财务指标",
+      "popularity": 98,
+      "unit": "%",
+      "description": "净利润与营业收入的比率，反映企业盈利能力",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-02-01 00:00",
+      "metric_id": "m001"
+    },
+    {
+      "id": "mk010",
+      "name": "ROE",
+      "category": "财务指标",
+      "popularity": 94,
+      "unit": "%",
+      "description": "净资产收益率，衡量股东权益回报",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-04-01 00:00",
+      "metric_id": "m002"
+    },
+    {
+      "id": "mk011",
+      "name": "ROA",
+      "category": "财务指标",
+      "popularity": 91,
+      "unit": "%",
+      "description": "总资产收益率，衡量资产使用效率",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-04-01 00:00",
+      "metric_id": "m003"
+    },
+    {
+      "id": "mk012",
+      "name": "不良贷款率",
+      "category": "财务指标",
+      "popularity": 96,
+      "unit": "%",
+      "description": "不良贷款占总贷款的比例，反映信贷资产质量",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m005"
+    },
+    {
+      "id": "mk013",
+      "name": "拨备覆盖率",
+      "category": "财务指标",
+      "popularity": 89,
+      "unit": "%",
+      "description": "贷款损失准备与不良贷款的比率",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m006"
+    },
+    {
+      "id": "mk014",
+      "name": "成本收入比",
+      "category": "财务指标",
+      "popularity": 85,
+      "unit": "%",
+      "description": "营业成本与营业收入的比率",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m004"
+    },
+    {
+      "id": "mk015",
+      "name": "总资产",
+      "category": "财务指标",
+      "popularity": 90,
+      "unit": "元",
+      "description": "企业拥有或控制的全部资产总额",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m018"
+    },
+    {
+      "id": "mk016",
+      "name": "净资产",
+      "category": "财务指标",
+      "popularity": 88,
+      "unit": "元",
+      "description": "企业所有者权益总额，即资产减去负债",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m019"
+    },
+    {
+      "id": "mk017",
+      "name": "营业收入",
+      "category": "财务指标",
+      "popularity": 92,
+      "unit": "元",
+      "description": "企业经营业务所取得的收入总额",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m020"
+    },
+    {
+      "id": "mk018",
+      "name": "净利润",
+      "category": "财务指标",
+      "popularity": 95,
+      "unit": "元",
+      "description": "企业税后利润，反映最终盈利能力",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m021"
+    },
+    {
+      "id": "mk019",
+      "name": "资产负债率",
+      "category": "财务指标",
+      "popularity": 87,
+      "unit": "%",
+      "description": "企业负债总额与资产总额的比率，反映财务杠杆水平",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m022"
+    },
+    {
+      "id": "mk020",
+      "name": "流动比率",
+      "category": "财务指标",
+      "popularity": 86,
+      "unit": "%",
+      "description": "流动资产与流动负债的比率，反映短期偿债能力",
+      "permission": "已授权",
+      "update_time": "2024-01-15 00:00",
+      "next_update_time": "2024-01-16 00:00",
+      "metric_id": "m023"
+    }
+  ],
+  "bloodline_data": {
+    "m001": {
+      "metric_name": "净利润率",
+      "bloodline": [
+        "利润表",
+        "合并报表",
+        "科目余额表",
+        "成本费用明细表",
+        "所得税申报表"
+      ],
+      "upstream": [
+        {
+          "type": "表",
+          "name": "利润表",
+          "fields": [
+            "营业收入",
+            "营业成本",
+            "各项费用",
+            "净利润"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "合并报表",
+          "fields": [
+            "归属于母公司净利润",
+            "少数股东损益"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "科目余额表",
+          "fields": [
+            "期末余额",
+            "本期发生额"
+          ]
+        }
+      ],
+      "downstream": [
+        {
+          "type": "报表",
+          "name": "财务分析月报",
+          "location": "BI系统/财务分析"
+        },
+        {
+          "type": "仪表盘",
+          "name": "盈利能力分析",
+          "location": "数据可视化平台"
+        }
+      ]
+    },
+    "m002": {
+      "metric_name": "ROE",
+      "bloodline": [
+        "利润表",
+        "资产负债表",
+        "股东权益变动表",
+        "所有者权益明细表"
+      ],
+      "upstream": [
+        {
+          "type": "表",
+          "name": "利润表",
+          "fields": [
+            "净利润"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "资产负债表",
+          "fields": [
+            "股东权益",
+            "股本",
+            "资本公积"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "股东权益变动表",
+          "fields": [
+            "期初余额",
+            "本期增减"
+          ]
+        }
+      ],
+      "downstream": [
+        {
+          "type": "报表",
+          "name": "股东回报分析报告",
+          "location": "BI系统/股东分析"
+        },
+        {
+          "type": "报表",
+          "name": "杜邦分析报告",
+          "location": "BI系统/财务分析"
+        }
+      ]
+    },
+    "m005": {
+      "metric_name": "不良贷款率",
+      "bloodline": [
+        "贷款台账表",
+        "贷款分类表",
+        "客户信息表",
+        "逾期贷款表",
+        "风险分类规则表"
+      ],
+      "upstream": [
+        {
+          "type": "表",
+          "name": "贷款台账表",
+          "fields": [
+            "贷款ID",
+            "客户ID",
+            "贷款金额",
+            "放款日期",
+            "到期日期"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "贷款分类表",
+          "fields": [
+            "贷款ID",
+            "分类等级",
+            "分类日期",
+            "分类原因"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "客户信息表",
+          "fields": [
+            "客户ID",
+            "客户类型",
+            "信用等级",
+            "所属行业"
+          ]
+        }
+      ],
+      "downstream": [
+        {
+          "type": "报表",
+          "name": "信贷质量月报",
+          "location": "BI系统/信贷分析"
+        },
+        {
+          "type": "报表",
+          "name": "风险预警周报",
+          "location": "风控系统/预警中心"
+        },
+        {
+          "type": "仪表盘",
+          "name": "资产质量大屏",
+          "location": "数据可视化平台"
+        }
+      ]
+    },
+    "m006": {
+      "metric_name": "拨备覆盖率",
+      "bloodline": [
+        "拨备计提表",
+        "不良贷款统计表",
+        "风险评估表",
+        "贷款分类表"
+      ],
+      "upstream": [
+        {
+          "type": "表",
+          "name": "拨备计提表",
+          "fields": [
+            "计提金额",
+            "计提比例",
+            "计提日期"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "不良贷款统计表",
+          "fields": [
+            "不良贷款余额",
+            "逾期天数"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "风险评估表",
+          "fields": [
+            "风险等级",
+            "评估分数"
+          ]
+        }
+      ],
+      "downstream": [
+        {
+          "type": "报表",
+          "name": "拨备分析报告",
+          "location": "BI系统/风控分析"
+        },
+        {
+          "type": "报表",
+          "name": "监管指标报送",
+          "location": "监管报送系统"
+        }
+      ]
+    },
+    "m009": {
+      "metric_name": "流动性比率",
+      "bloodline": [
+        "现金流量表",
+        "资产负债表",
+        "资金头寸表",
+        "存款明细表",
+        "贷款明细表"
+      ],
+      "upstream": [
+        {
+          "type": "表",
+          "name": "现金流量表",
+          "fields": [
+            "经营活动现金流",
+            "投资活动现金流"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "资产负债表",
+          "fields": [
+            "流动资产",
+            "流动负债"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "资金头寸表",
+          "fields": [
+            "头寸余额",
+            "可用资金"
+          ]
+        }
+      ],
+      "downstream": [
+        {
+          "type": "报表",
+          "name": "流动性分析报告",
+          "location": "BI系统/资金分析"
+        },
+        {
+          "type": "仪表盘",
+          "name": "流动性监控大屏",
+          "location": "资金管理平台"
+        }
+      ]
+    },
+    "m014": {
+      "metric_name": "中间业务收入",
+      "bloodline": [
+        "手续费收入表",
+        "佣金收入表",
+        "投资收益表",
+        "其他业务收入表"
+      ],
+      "upstream": [
+        {
+          "type": "表",
+          "name": "手续费收入表",
+          "fields": [
+            "手续费收入",
+            "佣金收入",
+            "结算费"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "投资收益表",
+          "fields": [
+            "债券收益",
+            "基金收益",
+            "理财收益"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "中间业务明细表",
+          "fields": [
+            "业务类型",
+            "收入金额"
+          ]
+        }
+      ],
+      "downstream": [
+        {
+          "type": "报表",
+          "name": "中间业务分析报告",
+          "location": "BI系统/业务分析"
+        },
+        {
+          "type": "报表",
+          "name": "非利息收入分析",
+          "location": "BI系统/财务分析"
+        }
+      ]
+    },
+    "m015": {
+      "metric_name": "保费收入",
+      "bloodline": [
+        "保单明细表",
+        "保费收入表",
+        "客户投保表",
+        "承保明细表"
+      ],
+      "upstream": [
+        {
+          "type": "表",
+          "name": "保单明细表",
+          "fields": [
+            "保单号",
+            "保费金额",
+            "保险期限"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "保费收入表",
+          "fields": [
+            "首年保费",
+            "续期保费",
+            "趸缴保费"
+          ]
+        },
+        {
+          "type": "表",
+          "name": "客户投保表",
+          "fields": [
+            "客户ID",
+            "产品类型",
+            "投保金额"
+          ]
+        }
+      ],
+      "downstream": [
+        {
+          "type": "报表",
+          "name": "保险业务月报",
+          "location": "BI系统/保险分析"
+        },
+        {
+          "type": "仪表盘",
+          "name": "保费收入大屏",
+          "location": "保险业务平台"
+        }
+      ]
+    }
+  },
+  "alert_rules": [
+    {
+      "id": "ar001",
+      "name": "不良贷款率超标预警",
+      "level": "danger",
+      "description": "当不良贷款率超过2%时触发预警，提示风险管控部门关注",
+      "condition": "不良贷款率 > 2%",
+      "current_value": 2.3,
+      "threshold": 2,
+      "unit": "%",
+      "severity": "高",
+      "status": "启用",
+      "create_time": "2024-01-01"
+    },
+    {
+      "id": "ar002",
+      "name": "资本充足率预警",
+      "level": "danger",
+      "description": "资本充足率低于监管要求时触发预警",
+      "condition": "资本充足率 < 10%",
+      "current_value": 11.5,
+      "threshold": 10,
+      "unit": "%",
+      "severity": "高",
+      "status": "启用",
+      "create_time": "2024-01-05"
+    },
+    {
+      "id": "ar003",
+      "name": "流动性比率预警",
+      "level": "warning",
+      "description": "流动性比率接近预警线，需关注资金流动性状况",
+      "condition": "流动性比率 < 50%",
+      "current_value": 52.3,
+      "threshold": 50,
+      "unit": "%",
+      "severity": "中",
+      "status": "启用",
+      "create_time": "2024-01-08"
+    },
+    {
+      "id": "ar004",
+      "name": "成本收入比预警",
+      "level": "warning",
+      "description": "成本收入比过高会影响盈利能力",
+      "condition": "成本收入比 > 35%",
+      "current_value": 34.8,
+      "threshold": 35,
+      "unit": "%",
+      "severity": "中",
+      "status": "停用",
+      "create_time": "2024-01-10"
+    },
+    {
+      "id": "ar005",
+      "name": "客户流失率预警",
+      "level": "warning",
+      "description": "客户流失率过高会影响业务稳定性",
+      "condition": "客户流失率 > 5%",
+      "current_value": 4.8,
+      "threshold": 5,
+      "unit": "%",
+      "severity": "低",
+      "status": "启用",
+      "create_time": "2024-01-12"
+    },
+    {
+      "id": "ar006",
+      "name": "净利润率下滑预警",
+      "level": "warning",
+      "description": "净利润率环比下降超过3%时触发预警",
+      "condition": "净利润率环比 < -3%",
+      "current_value": -2.1,
+      "threshold": -3,
+      "unit": "%",
+      "severity": "中",
+      "status": "启用",
+      "create_time": "2024-01-15"
+    }
+  ],
+  "quality_checks": [
+    {
+      "id": "qc001",
+      "name": "净利润率",
+      "check_type": "数据完整性检查",
+      "anomaly_count": 0,
+      "quality_score": 99,
+      "status": "normal",
+      "completeness": 99.2,
+      "consistency": 98.5,
+      "timeliness": 97.8,
+      "accuracy": 99.1
+    },
+    {
+      "id": "qc002",
+      "name": "不良贷款率",
+      "check_type": "数据准确性检查",
+      "anomaly_count": 2,
+      "quality_score": 98,
+      "status": "normal",
+      "completeness": 98.5,
+      "consistency": 99.0,
+      "timeliness": 96.2,
+      "accuracy": 98.8
+    },
+    {
+      "id": "qc003",
+      "name": "ROE",
+      "check_type": "数据一致性检查",
+      "anomaly_count": 5,
+      "quality_score": 97,
+      "status": "normal",
+      "completeness": 97.8,
+      "consistency": 96.5,
+      "timeliness": 95.0,
+      "accuracy": 97.2
+    },
+    {
+      "id": "qc004",
+      "name": "流动性比率",
+      "check_type": "时效性检查",
+      "anomaly_count": 8,
+      "quality_score": 85,
+      "status": "warning",
+      "completeness": 95.2,
+      "consistency": 94.8,
+      "timeliness": 72.0,
+      "accuracy": 95.0
+    },
+    {
+      "id": "qc005",
+      "name": "风险加权资产",
+      "check_type": "数据质量综合检查",
+      "anomaly_count": 15,
+      "quality_score": 78,
+      "status": "danger",
+      "completeness": 82.0,
+      "consistency": 75.5,
+      "timeliness": 70.2,
+      "accuracy": 84.5
+    },
+    {
+      "id": "qc006",
+      "name": "成本收入比",
+      "check_type": "数据完整性检查",
+      "anomaly_count": 3,
+      "quality_score": 94,
+      "status": "normal",
+      "completeness": 96.5,
+      "consistency": 93.8,
+      "timeliness": 92.0,
+      "accuracy": 93.5
+    },
+    {
+      "id": "qc007",
+      "name": "客户流失率",
+      "check_type": "数据准确性检查",
+      "anomaly_count": 12,
+      "quality_score": 82,
+      "status": "warning",
+      "completeness": 88.0,
+      "consistency": 82.5,
+      "timeliness": 78.0,
+      "accuracy": 85.0
+    },
+    {
+      "id": "qc008",
+      "name": "资产负债率",
+      "check_type": "数据一致性检查",
+      "anomaly_count": 0,
+      "quality_score": 99,
+      "status": "normal",
+      "completeness": 99.5,
+      "consistency": 99.0,
+      "timeliness": 98.5,
+      "accuracy": 99.2
+    },
+    {
+      "id": "qc009",
+      "name": "拨备覆盖率",
+      "check_type": "数据准确性检查",
+      "anomaly_count": 4,
+      "quality_score": 95,
+      "status": "normal",
+      "completeness": 97.2,
+      "consistency": 96.8,
+      "timeliness": 94.5,
+      "accuracy": 95.8
+    },
+    {
+      "id": "qc010",
+      "name": "资本充足率",
+      "check_type": "数据质量综合检查",
+      "anomaly_count": 1,
+      "quality_score": 98,
+      "status": "normal",
+      "completeness": 98.8,
+      "consistency": 98.2,
+      "timeliness": 97.5,
+      "accuracy": 98.5
+    },
+    {
+      "id": "qc011",
+      "name": "总资产",
+      "check_type": "数据完整性检查",
+      "anomaly_count": 0,
+      "quality_score": 99,
+      "status": "normal",
+      "completeness": 99.8,
+      "consistency": 99.5,
+      "timeliness": 99.0,
+      "accuracy": 99.6
+    },
+    {
+      "id": "qc012",
+      "name": "净资产",
+      "check_type": "数据一致性检查",
+      "anomaly_count": 2,
+      "quality_score": 97,
+      "status": "normal",
+      "completeness": 98.5,
+      "consistency": 97.8,
+      "timeliness": 96.5,
+      "accuracy": 98.0
+    },
+    {
+      "id": "qc013",
+      "name": "营业收入",
+      "check_type": "数据准确性检查",
+      "anomaly_count": 3,
+      "quality_score": 96,
+      "status": "normal",
+      "completeness": 97.8,
+      "consistency": 96.5,
+      "timeliness": 95.8,
+      "accuracy": 97.2
+    },
+    {
+      "id": "qc014",
+      "name": "净利润",
+      "check_type": "数据质量综合检查",
+      "anomaly_count": 1,
+      "quality_score": 98,
+      "status": "normal",
+      "completeness": 99.0,
+      "consistency": 98.5,
+      "timeliness": 97.8,
+      "accuracy": 98.8
+    },
+    {
+      "id": "qc015",
+      "name": "ROA",
+      "check_type": "数据完整性检查",
+      "anomaly_count": 5,
+      "quality_score": 93,
+      "status": "normal",
+      "completeness": 95.2,
+      "consistency": 92.8,
+      "timeliness": 94.0,
+      "accuracy": 93.5
+    },
+    {
+      "id": "qc016",
+      "name": "存贷比",
+      "check_type": "数据一致性检查",
+      "anomaly_count": 0,
+      "quality_score": 96,
+      "status": "normal",
+      "completeness": 97.3,
+      "consistency": 96.1,
+      "timeliness": 95.8,
+      "accuracy": 96.2
+    },
+    {
+      "id": "qc017",
+      "name": "现金比率",
+      "check_type": "数据准确性检查",
+      "anomaly_count": 4,
+      "quality_score": 92,
+      "status": "normal",
+      "completeness": 95.8,
+      "consistency": 93.5,
+      "timeliness": 89.5,
+      "accuracy": 94.0
+    },
+    {
+      "id": "qc018",
+      "name": "流动比率",
+      "check_type": "时效性检查",
+      "anomaly_count": 6,
+      "quality_score": 88,
+      "status": "warning",
+      "completeness": 94.5,
+      "consistency": 91.2,
+      "timeliness": 78.5,
+      "accuracy": 92.0
+    },
+    {
+      "id": "qc019",
+      "name": "存款增长率",
+      "check_type": "数据质量综合检查",
+      "anomaly_count": 3,
+      "quality_score": 94,
+      "status": "normal",
+      "completeness": 96.5,
+      "consistency": 94.2,
+      "timeliness": 92.8,
+      "accuracy": 95.0
+    },
+    {
+      "id": "qc020",
+      "name": "贷款增长率",
+      "check_type": "数据准确性检查",
+      "anomaly_count": 2,
+      "quality_score": 95,
+      "status": "normal",
+      "completeness": 97.2,
+      "consistency": 95.8,
+      "timeliness": 93.5,
+      "accuracy": 96.0
+    },
+    {
+      "id": "qc021",
+      "name": "保费收入",
+      "check_type": "数据完整性检查",
+      "anomaly_count": 4,
+      "quality_score": 94,
+      "status": "normal",
+      "completeness": 96.8,
+      "consistency": 94.5,
+      "timeliness": 92.0,
+      "accuracy": 95.5
+    },
+    {
+      "id": "qc022",
+      "name": "赔付率",
+      "check_type": "数据一致性检查",
+      "anomaly_count": 1,
+      "quality_score": 97,
+      "status": "normal",
+      "completeness": 98.5,
+      "consistency": 97.8,
+      "timeliness": 96.2,
+      "accuracy": 98.0
+    },
+    {
+      "id": "qc023",
+      "name": "退保率",
+      "check_type": "数据准确性检查",
+      "anomaly_count": 5,
+      "quality_score": 91,
+      "status": "normal",
+      "completeness": 94.2,
+      "consistency": 92.5,
+      "timeliness": 89.0,
+      "accuracy": 93.5
+    }
+  ]
+}

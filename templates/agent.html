@@ -1,0 +1,105 @@
+<div id="page-agent" class="page-section" style="display: none;">
+    <!-- API配置提示 -->
+    <div class="agent-panel" style="margin-bottom: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h3 class="agent-title" style="margin-bottom: 5px;">大模型配置</h3>
+                <p class="agent-subtitle" style="margin-bottom: 0;" id="llm-config-status">正在检测配置...</p>
+            </div>
+            <button class="btn btn-secondary" onclick="showLLMConfigModal()">
+                <i class="fas fa-cog"></i> 配置
+            </button>
+        </div>
+    </div>
+
+    <!-- 智能问数 -->
+    <div class="agent-panel">
+        <h3 class="agent-title">智能问数助手</h3>
+        <p class="agent-subtitle">自然语言查询指标数据</p>
+        <div class="agent-input">
+            <input type="text" class="agent-input-box" id="ask-input" placeholder="例如：上季度净利润趋势如何？有哪些指标表现较好？">
+            <button class="agent-input-btn" onclick="submitQuestion()" id="ask-btn">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+        <div id="ask-loading" style="margin-top: 20px; display: none; text-align: center;">
+            <i class="fas fa-spinner fa-spin" style="font-size: 32px; color: #667eea;"></i>
+            <span style="margin-left: 10px; color: #667eea;">AI分析中...</span>
+        </div>
+        <div id="ask-result" style="margin-top: 20px; display: none;">
+            <div style="background: rgba(255,255,255,0.2); border-radius: 8px; padding: 15px; text-align: left;">
+                <div style="font-weight: 600; margin-bottom: 10px;">问题：<span id="ask-question"></span></div>
+                <div style="font-size: 14px; opacity: 0.95; line-height: 1.6;" id="ask-answer"></div>
+            </div>
+        </div>
+        <div id="ask-error" style="margin-top: 20px; display: none;">
+            <div style="background: rgba(245, 101, 101, 0.2); border-radius: 8px; padding: 15px; color: #fc8181;">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="ask-error-msg" style="margin-left: 8px;"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 功能卡片 -->
+    <div class="agent-cards">
+        <div class="agent-card" onclick="showReportModal()">
+            <div class="agent-card-icon">
+                <i class="fas fa-file-chart-pie"></i>
+            </div>
+            <h4 class="agent-card-title">报告生成</h4>
+            <p class="agent-card-desc">一键生成数据分析报告，支持多种格式导出</p>
+        </div>
+        <div class="agent-card" onclick="runIntelligentAnalysis()">
+            <div class="agent-card-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h4 class="agent-card-title">智能分析</h4>
+            <p class="agent-card-desc">AI驱动的深度数据分析与预测</p>
+        </div>
+        <div class="agent-card" onclick="showInterpretation()">
+            <div class="agent-card-icon">
+                <i class="fas fa-brain"></i>
+            </div>
+            <h4 class="agent-card-title">指标解读</h4>
+            <p class="agent-card-desc">自动解读指标含义，提供业务洞察</p>
+        </div>
+    </div>
+
+    <!-- 报告生成结果 -->
+    <div id="report-result" style="margin-top: 20px; display: none;">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-file-alt" style="margin-right: 8px;"></i>
+                    生成的报告
+                </h2>
+                <button class="btn btn-secondary btn-sm" onclick="copyReport()">
+                    <i class="fas fa-copy"></i> 复制
+                </button>
+            </div>
+            <div id="report-content" style="padding: 20px; background: #f9fafb; border-radius: 8px; white-space: pre-wrap; line-height: 1.8;"></div>
+        </div>
+    </div>
+
+    <!-- 智能分析结果 -->
+    <div id="analysis-result" style="margin-top: 20px; display: none;">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">
+                    <i class="fas fa-lightbulb" style="margin-right: 8px;"></i>
+                    AI分析结果
+                </h2>
+            </div>
+            <div id="analysis-content" style="padding: 20px; background: #f9fafb; border-radius: 8px; white-space: pre-wrap; line-height: 1.8;"></div>
+        </div>
+    </div>
+
+    <!-- 指标解读 -->
+    <div class="agent-interpretation" id="agent-interpretation" style="display: none;">
+        <div class="interpretation-header">
+            <i class="fas fa-lightbulb"></i>
+            <span class="interpretation-title">指标解读</span>
+        </div>
+        <div class="interpretation-content" id="interpretation-content"></div>
+    </div>
+</div>
