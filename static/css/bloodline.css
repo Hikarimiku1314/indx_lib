@@ -1,7 +1,6 @@
-/**
- * 指标血缘样式
- * 包含：血缘视图、血缘详情视图、力导向图
- */
+/* ========================================
+   指标血缘样式
+   ======================================== */
 
 /* 血缘容器 */
 .bloodline-container {
@@ -13,7 +12,6 @@
 .bloodline-section {
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 20px;
 }
 
 .bloodline-section.upstream {
@@ -96,7 +94,6 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
-    position: relative;  /* 添加相对定位作为信息面板的定位参考 */
 }
 
 .bloodline-canvas-container {
@@ -105,7 +102,7 @@
     height: 500px;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     border-radius: 12px;
-    overflow: hidden;
+    overflow: auto;
     border: 1px solid #e2e8f0;
 }
 
@@ -125,17 +122,15 @@
 
 .bloodline-info-panel {
     position: absolute;
-    top: 15px;   /* 相对于画布容器顶部 */
-    right: 15px; /* 相对于画布容器右侧 */
-    width: 260px;
+    top: 20px;
+    right: 20px;
+    width: 280px;
     background: white;
     border-radius: 10px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    z-index: 20;  /* 在画布之上，但不影响外部元素 */
+    z-index: 10;
     display: none;
     overflow: hidden;
-    max-height: 350px;
-    overflow-y: auto;
 }
 
 .bloodline-info-panel.show {
@@ -221,37 +216,6 @@
     margin-bottom: 8px;
 }
 
-/* 操作按钮样式 */
-.info-actions {
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 1px solid #e2e8f0;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.info-actions .btn {
-    padding: 8px 16px;
-    font-size: 13px;
-    border-radius: 6px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.3s ease;
-}
-
-.info-actions .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    cursor: pointer;
-}
-
-.info-actions .btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
 .bloodline-legend {
     display: flex;
     justify-content: center;
@@ -274,68 +238,6 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-}
-
-/* 缩放控件 */
-.zoom-controls {
-    position: absolute;
-    top: 15px;
-    left: 15px;
-    display: flex;
-    flex-direction: column;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    padding: 5px;
-    z-index: 5;
-}
-
-.zoom-btn {
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    background: transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 16px;
-    color: #5a6c7d;
-    transition: all 0.2s ease;
-}
-
-.zoom-btn:hover {
-    background: #f0f4f8;
-    color: #667eea;
-}
-
-.zoom-btn:active {
-    background: #e0e6ed;
-}
-
-.zoom-level {
-    padding: 6px 0;
-    text-align: center;
-    font-size: 11px;
-    color: #8898aa;
-    font-weight: 500;
-}
-
-#zoom-value {
-    min-width: 40px;
-    display: inline-block;
-}
-
-.detail-bloodline-item:hover {
-    background-color: #f0f4f8;
-    border-radius: 4px;
-    transition: background-color 0.2s;
-}
-
-#data-preview-content table tbody tr:hover {
-    background-color: #f8f9fa;
-    transition: background-color 0.2s;
 }
 
 /* 响应式 */

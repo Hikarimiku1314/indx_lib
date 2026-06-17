@@ -804,105 +804,200 @@ function saveMetric() {
 
 // 加载指标市场数据
 let selectedMetrics = [];
+let allMarketData = [];
+let currentCategory = '全部';
+let currentKeyword = '';
 
 function loadMarketData() {
     fetch('/api/market')
         .then(res => res.json())
         .then(data => {
-            const grid = document.getElementById('market-grid');
-            grid.innerHTML = data.map(metric => `
-                <div class="market-card" draggable="true" ondragstart="dragMetric(event, '${metric.id}')">
-                    <div class="market-card-header">
-                        <div class="market-card-title">${metric.name}</div>
-                        <div class="market-card-category">${metric.category}</div>
-                    </div>
-                    <div class="market-card-body">
-                        <p>${metric.description}</p>
-                    </div>
-                    <div class="market-card-footer">
-                        <span class="market-popularity">
-                            <i class="fas fa-fire" style="color: #ff6b35;"></i>
-                            ${metric.popularity}
-                        </span>
-                        <span class="status-badge ${metric.permission === '已授权' ? 'status-authorized' : 'status-pending'}">${metric.permission}</span>
-                    </div>
-                    <div class="market-card-time">
-                        <div class="time-item">
-                            <i class="fas fa-history"></i>
-                            <span>${metric.update_time}</span>
-                        </div>
-                        <div class="time-item">
-                            <i class="fas fa-clock"></i>
-                            <span>${metric.next_update_time}</span>
-                        </div>
-                    </div>
-                    <div class="market-card-actions">
-                        <label class="market-card-checkbox">
-                            <input type="checkbox" ${metric.permission === '已授权' ? '' : 'disabled'} onchange="toggleMetricSelection('${metric.id}', '${metric.name}', '${metric.category}', '${metric.unit || '-'}', '${metric.permission}')">
-                            <span>选择</span>
-                        </label>
-                        <button class="btn btn-primary btn-sm" onclick="showMarketMetricDetail('${metric.id}')">
-                            <i class="fas fa-info-circle"></i> 详情
-                        </button>
-                    </div>
-                </div>
-            `).join('');
+            allMarketData = data;
+            updateMarketStats(data);
+            renderMarketCards(data);
+            
+            document.getElementById('market-search').addEventListener('input', handleSearchInput);
         });
 }
 
-// 拖拽指标
-function dragMetric(event, metricId) {
-    event.dataTransfer.setData('metricId', metricId);
+function updateMarketStats(data) {
+    document.getElementById('total-metrics').textContent = data.length;
+    document.getElementById('authorized-metrics').textContent = data.filter(m => m.permission === '已授权').length;
+    document.getElementById('popular-metrics').textContent = data.filter(m => m.popularity >= 80).length;
 }
 
-// 切换指标选择
-function toggleMetricSelection(id, name, category, unit, permission) {
-    const checkbox = event.target;
-    if (checkbox.checked) {
+function renderMarketCards(data) {
+    const grid = document.getElementById('market-grid');
+    const emptyState = document.getElementById('market-empty');
+    
+    if (data.length === 0) {
+        grid.innerHTML = '';
+        emptyState.style.display = 'flex';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    grid.innerHTML = data.map(metric => {
+        const isAuthorized = metric.permission === '已授权';
+        const isSelected = selectedMetrics.some(m => m.id === metric.id);
+        const statusClass = isAuthorized ? 'authorized' : (metric.permission === '审批中' ? 'pending' : 'unauthorized');
+        
+        return `
+            <div class="market-card ${isSelected ? 'selected' : ''}" onclick="toggleMetricCard('${metric.id}', '${metric.name}', '${metric.category}', '${metric.unit || '-'}', '${metric.permission}')">
+                <div class="market-card-header">
+                    <h3 class="market-card-title">${metric.name}</h3>
+                    <span class="market-card-category">${metric.category}</span>
+                </div>
+                <div class="market-card-body">
+                    <p>${metric.description}</p>
+                </div>
+                <div class="market-card-footer">
+                    <div class="market-popularity">
+                        <i class="fas fa-fire"></i>
+                        <span>${metric.popularity}</span>
+                    </div>
+                    <span class="market-card-status ${statusClass}">${metric.permission}</span>
+                </div>
+                <div class="market-card-actions">
+                    <button class="market-card-btn ${isAuthorized ? 'primary' : 'disabled'}" onclick="event.stopPropagation(); showMarketMetricDetail('${metric.id}')">
+                        <i class="fas fa-info-circle"></i> 详情
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function handleSearchInput() {
+    const keyword = document.getElementById('market-search').value.trim();
+    const clearBtn = document.getElementById('search-clear');
+    
+    if (keyword) {
+        clearBtn.style.display = 'block';
+    } else {
+        clearBtn.style.display = 'none';
+    }
+    
+    currentKeyword = keyword;
+    filterAndRenderMarket();
+}
+
+function clearSearch() {
+    document.getElementById('market-search').value = '';
+    document.getElementById('search-clear').style.display = 'none';
+    currentKeyword = '';
+    filterAndRenderMarket();
+}
+
+function filterByCategory(category) {
+    currentCategory = category;
+    
+    document.querySelectorAll('.filter-tab').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.category === category) {
+            btn.classList.add('active');
+        }
+    });
+    
+    filterAndRenderMarket();
+}
+
+function sortMarket() {
+    const sortType = document.getElementById('market-sort').value;
+    filterAndRenderMarket(sortType);
+}
+
+function filterAndRenderMarket(sortType) {
+    let filtered = allMarketData;
+    
+    if (currentCategory !== '全部') {
+        filtered = filtered.filter(m => m.category === currentCategory);
+    }
+    
+    if (currentKeyword) {
+        const kw = currentKeyword.toLowerCase();
+        filtered = filtered.filter(m => 
+            m.name.toLowerCase().includes(kw) || 
+            m.description.toLowerCase().includes(kw) ||
+            m.category.toLowerCase().includes(kw)
+        );
+    }
+    
+    const sortBy = sortType || document.getElementById('market-sort').value;
+    filtered.sort((a, b) => {
+        if (sortBy === 'popularity') {
+            return b.popularity - a.popularity;
+        } else if (sortBy === 'name') {
+            return a.name.localeCompare(b.name, 'zh-CN');
+        } else {
+            return new Date(b.update_time) - new Date(a.update_time);
+        }
+    });
+    
+    renderMarketCards(filtered);
+}
+
+function refreshMarket() {
+    loadMarketData();
+}
+
+function toggleMetricCard(id, name, category, unit, permission) {
+    if (permission !== '已授权') {
+        showMarketMetricDetail(id);
+        return;
+    }
+    
+    const isSelected = selectedMetrics.some(m => m.id === id);
+    
+    if (isSelected) {
+        selectedMetrics = selectedMetrics.filter(m => m.id !== id);
+    } else {
         if (selectedMetrics.length >= 5) {
-            checkbox.checked = false;
             alert('最多只能选择5个指标');
             return;
         }
         selectedMetrics.push({ id, name, category, unit, permission });
-    } else {
-        selectedMetrics = selectedMetrics.filter(m => m.id !== id);
     }
+    
     updateSelectedMetricsPanel();
+    filterAndRenderMarket();
 }
 
 // 更新已选指标面板
 function updateSelectedMetricsPanel() {
-    const countDisplay = document.getElementById('selected-count-display');
-    const listContainer = document.getElementById('selected-metrics-list');
-    const openCompareBtn = document.getElementById('open-compare-btn');
-    const comparisonPanel = document.getElementById('comparison-panel');
+    const countDisplay = document.getElementById('selection-count');
+    const listContainer = document.getElementById('selection-list');
+    const compareBtn = document.getElementById('compare-btn');
+    const runAnalysisBtn = document.getElementById('run-analysis-btn');
+    const generateReportBtn = document.getElementById('generate-report-btn');
 
-    countDisplay.textContent = `已选 ${selectedMetrics.length} 个指标（最多5个）`;
-    openCompareBtn.disabled = selectedMetrics.length < 2;
+    countDisplay.textContent = `${selectedMetrics.length}/5`;
+    compareBtn.disabled = selectedMetrics.length < 2;
 
-    // 根据是否有选中指标调整面板宽度
-    if (selectedMetrics.length > 0) {
-        comparisonPanel.classList.add('has-selection');
-    } else {
-        comparisonPanel.classList.remove('has-selection');
+    const hasSelection = selectedMetrics.length > 0;
+
+    runAnalysisBtn.disabled = !hasSelection;
+    generateReportBtn.disabled = !hasSelection;
+
+    if (hasSelection) {
+        fetchAIInsights();
     }
 
     if (selectedMetrics.length === 0) {
         listContainer.innerHTML = `
-            <div class="empty-selected-state">
+            <div class="panel-empty">
                 <i class="fas fa-hand-pointer"></i>
-                <p>勾选或拖拽指标卡片<br>到此处添加对比</p>
+                <p>点击指标卡片添加到分析列表</p>
             </div>
         `;
     } else {
         listContainer.innerHTML = selectedMetrics.map(m => `
-            <div class="selected-metric-item">
-                <div class="selected-metric-info">
-                    <div class="selected-metric-name">${m.name}</div>
-                    <div class="selected-metric-category">${m.category}</div>
+            <div class="selection-item">
+                <div class="selection-item-info">
+                    <div class="selection-item-name">${m.name}</div>
+                    <div class="selection-item-category">${m.category}</div>
                 </div>
-                <button class="selected-metric-remove" onclick="removeMetric('${m.id}')">
+                <button class="selection-item-remove" onclick="removeMetric('${m.id}')">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -914,21 +1009,14 @@ function updateSelectedMetricsPanel() {
 function removeMetric(id) {
     selectedMetrics = selectedMetrics.filter(m => m.id !== id);
     updateSelectedMetricsPanel();
-    
-    // 取消勾选对应的checkbox
-    const checkbox = document.querySelector(`input[onchange*="${id}"]`);
-    if (checkbox) checkbox.checked = false;
+    filterAndRenderMarket();
 }
 
 // 清空选择
-function clearMetricSelection() {
+function clearAllSelection() {
     selectedMetrics = [];
     updateSelectedMetricsPanel();
-    
-    // 取消所有勾选
-    document.querySelectorAll('.market-card-checkbox input').forEach(cb => {
-        cb.checked = false;
-    });
+    filterAndRenderMarket();
 }
 
 // 打开对比弹窗
@@ -1428,575 +1516,837 @@ function getUnitGroupsInfo(metrics) {
     ).join('<br>');
 }
 
-// 搜索市场
-function searchMarket() {
-    const keyword = document.getElementById('market-search').value;
-    const category = document.getElementById('market-category').value;
-    
-    fetch('/api/market')
-        .then(res => res.json())
-        .then(data => {
-            let filtered = data;
-            
-            if (keyword) {
-                filtered = filtered.filter(m => m.name.includes(keyword) || m.description.includes(keyword));
-            }
-            
-            if (category !== '全部') {
-                filtered = filtered.filter(m => m.category === category);
-            }
-            
-            const grid = document.getElementById('market-grid');
-            grid.innerHTML = filtered.map(metric => `
-                <div class="market-card" draggable="true" ondragstart="dragMetric(event, '${metric.id}')">
-                    <div class="market-card-header">
-                        <div class="market-card-title">${metric.name}</div>
-                        <div class="market-card-category">${metric.category}</div>
-                    </div>
-                    <div class="market-card-body">
-                        <p>${metric.description}</p>
-                    </div>
-                    <div class="market-card-footer">
-                        <span class="market-popularity">
-                            <i class="fas fa-fire" style="color: #ff6b35;"></i>
-                            ${metric.popularity}
-                        </span>
-                        <span class="status-badge ${metric.permission === '已授权' ? 'status-authorized' : 'status-pending'}">${metric.permission}</span>
-                    </div>
-                    <div class="market-card-time">
-                        <div class="time-item">
-                            <i class="fas fa-history"></i>
-                            <span>${metric.update_time}</span>
-                        </div>
-                        <div class="time-item">
-                            <i class="fas fa-clock"></i>
-                            <span>${metric.next_update_time}</span>
-                        </div>
-                    </div>
-                    <div class="market-card-actions">
-                        <label class="market-card-checkbox">
-                            <input type="checkbox" ${metric.permission === '已授权' ? '' : 'disabled'} onchange="toggleMetricSelection('${metric.id}', '${metric.name}', '${metric.category}', '${metric.unit || '-'}', '${metric.permission}')">
-                            <span>选择</span>
-                        </label>
-                        <button class="btn btn-primary btn-sm" onclick="showMarketMetricDetail('${metric.id}')">
-                            <i class="fas fa-info-circle"></i> 详情
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        });
-}
-
 // 加载血缘数据
 function loadBloodline(metricId) {
     fetch('/api/bloodline/' + metricId)
         .then(res => res.json())
         .then(data => {
-            // 隐藏旧的容器视图
-            document.getElementById('bloodline-container').style.display = 'none';
-            
-            if (metricId === 'all') {
-                // 绘制全部指标的力导向图
-                renderBloodlineGraph(data);
-            } else {
-                // 绘制单个指标的力导向图（以该指标为中心）
-                // 创建只包含当前指标及其上下游的数据集
-                const singleMetricData = {};
-                singleMetricData[metricId] = data;
-                renderBloodlineGraph(singleMetricData);
+            if (Object.keys(data).length > 0) {
+                bloodlineData = data;
+                isMultiMode = metricId === 'all';
+                if (metricId === 'all') {
+                    initMultiForceGraph(data);
+                } else {
+                    initForceGraph(data, metricId);
+                }
             }
         });
 }
 
-// 力导向图相关变量
+// 全局变量
+let bloodlineCtx = null;
 let bloodlineNodes = [];
-let bloodlineEdges = [];
-let bloodlineCanvas, bloodlineCtx;
-let bloodlineAnimationId = null;
-let bloodlineInitialized = false;
-let bloodlineScrollBound = false;
+let bloodlineLinks = [];
+let bloodlineData = {};
+let animationId = null;
+let selectedNode = null;
+let draggingNode = null;
+let dragNodeOffsetX = 0;
+let dragNodeOffsetY = 0;
+let isDragging = false;
+let dragStartX = 0;
+let dragStartY = 0;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+let scale = 1;
+let offsetX = 0;
+let offsetY = 0;
+let isMultiMode = false;
+let hasMoved = false;
 
-// 渲染力导向图
-function renderBloodlineGraph(bloodlineData) {
-    // 停止之前的动画
-    if (bloodlineAnimationId) {
-        cancelAnimationFrame(bloodlineAnimationId);
-        bloodlineAnimationId = null;
+// 停止动画
+function stopAnimation() {
+    if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
     }
-    
-    bloodlineCanvas = document.getElementById('bloodline-canvas');
-    bloodlineCtx = bloodlineCanvas.getContext('2d');
-    
-    // 设置canvas尺寸
-    resizeBloodlineCanvas();
-    
-    // 只绑定一次resize事件
-    if (!bloodlineInitialized) {
-        window.addEventListener('resize', resizeBloodlineCanvas);
-        bloodlineInitialized = true;
+}
+
+// 移除画布事件
+function removeCanvasEvents() {
+    const canvas = document.getElementById('bloodline-canvas');
+    if (canvas) {
+        canvas.removeEventListener('click', onCanvasClick);
+        canvas.removeEventListener('mousemove', onCanvasMouseMove);
+        canvas.removeEventListener('wheel', onCanvasWheel);
+        canvas.removeEventListener('mousedown', onCanvasMouseDown);
+        canvas.removeEventListener('mousemove', onCanvasDrag);
+        canvas.removeEventListener('mouseup', onCanvasMouseUp);
+        canvas.removeEventListener('mouseleave', onCanvasMouseUp);
     }
+}
+
+// 初始化力导向图（单个指标）
+function initForceGraph(data, metricId) {
+    const canvas = document.getElementById('bloodline-canvas');
+    const container = document.querySelector('.bloodline-canvas-container');
     
-    // 绑定滚轮事件（只绑定一次）
-    if (!bloodlineScrollBound) {
-        bloodlineCanvas.addEventListener('wheel', handleWheelZoom);
-        bloodlineScrollBound = true;
-    }
-    
-    // 清空画布
-    bloodlineCtx.clearRect(0, 0, bloodlineCanvas.width, bloodlineCanvas.height);
-    
-    // 构建节点和边
+    canvas.width = container.clientWidth;
+    canvas.height = container.clientHeight;
+    bloodlineCtx = canvas.getContext('2d');
+
+    // 重置缩放和平移
+    scale = 1;
+    offsetX = 0;
+    offsetY = 0;
+
+    // 清空之前的数据
     bloodlineNodes = [];
-    bloodlineEdges = [];
-    
-    // 添加核心指标节点（中心）
-    const centerX = bloodlineCanvas.width / 2;
-    const centerY = bloodlineCanvas.height / 2;
-    
-    Object.keys(bloodlineData).forEach((metricId, index) => {
-        const data = bloodlineData[metricId];
-        
-        // 添加指标节点（放在中心位置）
-        bloodlineNodes.push({
-            id: metricId,
-            name: data.metric_name,
-            type: 'metric',
-            x: centerX,
-            y: centerY,
-            vx: 0,
-            vy: 0
-        });
-        
-        // 添加上游节点
-        if (data.upstream && Array.isArray(data.upstream)) {
-            data.upstream.forEach((item, i) => {
-                const nodeId = metricId + '_up_' + i;
-                bloodlineNodes.push({
-                    id: nodeId,
-                    name: item.name || String(item),
-                    type: 'upstream',
-                    x: centerX - 180 + (Math.random() - 0.5) * 60,
-                    y: centerY + (i - data.upstream.length / 2) * 70,
-                    vx: 0,
-                    vy: 0
-                });
-                
-                bloodlineEdges.push({
-                    source: nodeId,
-                    target: metricId
-                });
-            });
-        }
-        
-        // 添加下游节点
-        if (data.downstream && Array.isArray(data.downstream)) {
-            data.downstream.forEach((item, i) => {
-                const nodeId = metricId + '_down_' + i;
-                bloodlineNodes.push({
-                    id: nodeId,
-                    name: item.name || String(item),
-                    type: 'downstream',
-                    x: centerX + 180 + (Math.random() - 0.5) * 60,
-                    y: centerY + (i - data.downstream.length / 2) * 70,
-                    vx: 0,
-                    vy: 0
-                });
-                
-                bloodlineEdges.push({
-                    source: metricId,
-                    target: nodeId
-                });
-            });
-        }
+    bloodlineLinks = [];
+    selectedNode = null;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    // 添加核心指标节点
+    bloodlineNodes.push({
+        id: 'center',
+        name: data.metric_name,
+        type: 'center',
+        x: centerX,
+        y: centerY,
+        vx: 0,
+        vy: 0,
+        radius: 35,
+        color: '#667eea',
+        data: { metricId }
     });
-    
-    // 移除旧的事件监听器（如果存在）
-    bloodlineCanvas.onclick = handleBloodlineClick;
-    bloodlineCanvas.onmousemove = handleBloodlineHover;
-    
+
+    // 添加上游数据源节点
+    const upstreamCount = data.upstream.length;
+    data.upstream.forEach((item, index) => {
+        const angle = (index / upstreamCount) * Math.PI - Math.PI / 2;
+        const distance = 150 + Math.random() * 50;
+        bloodlineNodes.push({
+            id: 'upstream-' + index,
+            name: item.name,
+            type: 'upstream',
+            x: centerX + Math.cos(angle) * distance,
+            y: centerY + Math.sin(angle) * distance,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            radius: 22,
+            color: '#48bb78',
+            data: item
+        });
+        bloodlineLinks.push({
+            source: 'upstream-' + index,
+            target: 'center',
+            type: 'upstream'
+        });
+    });
+
+    // 添加下游应用节点
+    const downstreamCount = data.downstream.length;
+    data.downstream.forEach((item, index) => {
+        const angle = (index / downstreamCount) * Math.PI + Math.PI / 2;
+        const distance = 150 + Math.random() * 50;
+        bloodlineNodes.push({
+            id: 'downstream-' + index,
+            name: item.name,
+            type: 'downstream',
+            x: centerX + Math.cos(angle) * distance,
+            y: centerY + Math.sin(angle) * distance,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            radius: 22,
+            color: '#ed8936',
+            data: item
+        });
+        bloodlineLinks.push({
+            source: 'center',
+            target: 'downstream-' + index,
+            type: 'downstream'
+        });
+    });
+
+    // 添加鼠标事件
+    canvas.addEventListener('click', onCanvasClick);
+    canvas.addEventListener('mousemove', onCanvasMouseMove);
+    canvas.addEventListener('wheel', onCanvasWheel);
+    canvas.addEventListener('mousedown', onCanvasMouseDown);
+    canvas.addEventListener('mousemove', onCanvasDrag);
+    canvas.addEventListener('mouseup', onCanvasMouseUp);
+    canvas.addEventListener('mouseleave', onCanvasMouseUp);
+
     // 开始动画
-    startBloodlineSimulation();
+    animate();
 }
 
-// 重置画布尺寸
-function resizeBloodlineCanvas() {
-    if (!bloodlineCanvas) return;
+// 初始化力导向图（多个指标）
+function initMultiForceGraph(allData) {
+    const canvas = document.getElementById('bloodline-canvas');
+    const container = document.querySelector('.bloodline-canvas-container');
     
-    const container = bloodlineCanvas.parentElement;
-    const width = container.offsetWidth;
-    const height = container.offsetHeight;
-    
-    // 保存当前图形
-    bloodlineCanvas.width = width;
-    bloodlineCanvas.height = height;
-    bloodlineCanvas.style.width = width + 'px';
-    bloodlineCanvas.style.height = height + 'px';
-}
+    // 增大画布尺寸，提供更大的布局空间
+    const scaleFactor = 4;
+    canvas.width = container.clientWidth * scaleFactor;
+    canvas.height = container.clientHeight * scaleFactor;
+    bloodlineCtx = canvas.getContext('2d');
 
-// 力导向图模拟
-function startBloodlineSimulation() {
-    if (bloodlineAnimationId) {
-        cancelAnimationFrame(bloodlineAnimationId);
-    }
-    
-    let iteration = 0;
-    
-    function simulate() {
-        // 力导向图算法 - 调整参数使其更快稳定
-        const repulsionForce = 3000;  // 减小排斥力
-        const attractionForce = 0.02; // 增大吸引力
-        const centerForce = 0.005;    // 减小向心力
-        const damping = 0.95;         // 增大阻尼系数
+    // 重置缩放和平移
+    scale = 0.65;
+    offsetX = 0;
+    offsetY = 0;
+
+    // 清空之前的数据
+    bloodlineNodes = [];
+    bloodlineLinks = [];
+    selectedNode = null;
+
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+
+    // 定义核心指标颜色
+    const centerColors = [
+        '#667eea', '#764ba2', '#f093fb', '#4facfe', 
+        '#43e97b', '#38f9d7', '#fa709a'
+    ];
+
+    // 获取所有指标ID
+    const metricIds = Object.keys(allData);
+
+    const metricCount = metricIds.length;
+
+    // 为每个指标创建节点
+    metricIds.forEach((metricId, index) => {
+        const data = allData[metricId];
         
-        // 计算排斥力
-        for (let i = 0; i < bloodlineNodes.length; i++) {
-            for (let j = i + 1; j < bloodlineNodes.length; j++) {
-                const dx = bloodlineNodes[j].x - bloodlineNodes[i].x;
-                const dy = bloodlineNodes[j].y - bloodlineNodes[i].y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                
-                // 添加距离下限，避免近距离时力过大
-                if (dist < 30) continue;
-                
-                const force = repulsionForce / (dist * dist);
-                
-                const fx = (dx / dist) * force;
-                const fy = (dy / dist) * force;
-                
-                bloodlineNodes[i].vx -= fx;
-                bloodlineNodes[i].vy -= fy;
-                bloodlineNodes[j].vx += fx;
-                bloodlineNodes[j].vy += fy;
+        const angle = (index / metricCount) * Math.PI * 2;
+        const distance = 100 + Math.random() * 30;
+        
+        // 添加核心指标节点
+        const centerId = 'center-' + metricId;
+        bloodlineNodes.push({
+            id: centerId,
+            name: data.metric_name,
+            type: 'center',
+            x: centerX + Math.cos(angle) * distance,
+            y: centerY + Math.sin(angle) * distance,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            radius: 30,
+            color: centerColors[index % centerColors.length],
+            data: { metricId }
+        });
+
+        // 添加上游数据源节点
+        data.upstream.forEach((item, upstreamIndex) => {
+            const upstreamAngle = angle - Math.PI / 2 + (upstreamIndex / data.upstream.length) * Math.PI;
+            const upstreamDistance = 120 + Math.random() * 40;
+            const nodeId = 'upstream-' + metricId + '-' + upstreamIndex;
+            
+            // 检查是否已存在同名数据源节点
+            const existingNode = bloodlineNodes.find(n => n.name === item.name && n.type === 'upstream');
+            if (existingNode) {
+                bloodlineLinks.push({
+                    source: existingNode.id,
+                    target: centerId,
+                    type: 'upstream'
+                });
+            } else {
+                bloodlineNodes.push({
+                    id: nodeId,
+                    name: item.name,
+                    type: 'upstream',
+                    x: centerX + Math.cos(upstreamAngle) * (distance + upstreamDistance),
+                    y: centerY + Math.sin(upstreamAngle) * (distance + upstreamDistance),
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: 20,
+                    color: '#48bb78',
+                    data: item
+                });
+                bloodlineLinks.push({
+                    source: nodeId,
+                    target: centerId,
+                    type: 'upstream'
+                });
             }
-        }
-        
-        // 计算吸引力（边的连接）
-        bloodlineEdges.forEach(edge => {
-            const source = bloodlineNodes.find(n => n.id === edge.source);
-            const target = bloodlineNodes.find(n => n.id === edge.target);
+        });
+
+        // 添加下游应用节点
+        data.downstream.forEach((item, downstreamIndex) => {
+            const downstreamAngle = angle + Math.PI / 2 + (downstreamIndex / data.downstream.length) * Math.PI;
+            const downstreamDistance = 120 + Math.random() * 40;
+            const nodeId = 'downstream-' + metricId + '-' + downstreamIndex;
             
-            if (source && target) {
-                const dx = target.x - source.x;
-                const dy = target.y - source.y;
-                const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const force = (dist - 120) * attractionForce;  // 减小目标距离
-                
-                const fx = (dx / dist) * force;
-                const fy = (dy / dist) * force;
-                
-                source.vx += fx;
-                source.vy += fy;
-                target.vx -= fx;
-                target.vy -= fy;
+            // 检查是否已存在同名下游节点
+            const existingNode = bloodlineNodes.find(n => n.name === item.name && n.type === 'downstream');
+            if (existingNode) {
+                bloodlineLinks.push({
+                    source: centerId,
+                    target: existingNode.id,
+                    type: 'downstream'
+                });
+            } else {
+                bloodlineNodes.push({
+                    id: nodeId,
+                    name: item.name,
+                    type: 'downstream',
+                    x: centerX + Math.cos(downstreamAngle) * (distance + downstreamDistance),
+                    y: centerY + Math.sin(downstreamAngle) * (distance + downstreamDistance),
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    radius: 20,
+                    color: '#ed8936',
+                    data: item
+                });
+                bloodlineLinks.push({
+                    source: centerId,
+                    target: nodeId,
+                    type: 'downstream'
+                });
             }
         });
-        
-        // 向心力
-        const centerX = bloodlineCanvas.width / 2;
-        const centerY = bloodlineCanvas.height / 2;
-        
-        bloodlineNodes.forEach(node => {
-            node.vx += (centerX - node.x) * centerForce;
-            node.vy += (centerY - node.y) * centerForce;
-        });
-        
-        // 更新位置
-        let totalVelocity = 0;
-        bloodlineNodes.forEach(node => {
-            node.vx *= damping;
-            node.vy *= damping;
-            node.x += node.vx;
-            node.y += node.vy;
-            
-            // 计算总速度用于稳定检测
-            totalVelocity += Math.abs(node.vx) + Math.abs(node.vy);
-            
-            // 边界约束
-            const margin = 50;
-            node.x = Math.max(margin, Math.min(bloodlineCanvas.width - margin, node.x));
-            node.y = Math.max(margin, Math.min(bloodlineCanvas.height - margin, node.y));
-        });
-        
-        // 绘制
-        drawBloodlineGraph();
-        
-        iteration++;
-        
-        // 稳定检测：当总速度足够小或迭代次数足够多时停止动画
-        if (totalVelocity < 0.5 || iteration > 500) {
-            // 停止动画，但保持最后一帧显示
-            return;
-        }
-        
-        bloodlineAnimationId = requestAnimationFrame(simulate);
-    }
-    
-    simulate();
+    });
+
+    // 添加鼠标事件
+    canvas.addEventListener('click', onCanvasClick);
+    canvas.addEventListener('mousemove', onCanvasMouseMove);
+    canvas.addEventListener('wheel', onCanvasWheel);
+    canvas.addEventListener('mousedown', onCanvasMouseDown);
+    canvas.addEventListener('mousemove', onCanvasDrag);
+    canvas.addEventListener('mouseup', onCanvasMouseUp);
+    canvas.addEventListener('mouseleave', onCanvasMouseUp);
+
+    // 自动滚动到画布中心
+    setTimeout(() => {
+        const container = canvas.parentElement;
+        container.scrollLeft = (canvas.width - container.offsetWidth) / 2;
+        container.scrollTop = (canvas.height - container.offsetHeight) / 2;
+    }, 100);
+
+    // 开始动画
+    animate();
 }
 
-// 绘制力导向图
-function drawBloodlineGraph() {
-    bloodlineCtx.clearRect(0, 0, bloodlineCanvas.width, bloodlineCanvas.height);
-    
-    // 保存上下文状态
-    bloodlineCtx.save();
-    
-    // 计算中心点
-    const centerX = bloodlineCanvas.width / 2;
-    const centerY = bloodlineCanvas.height / 2;
-    
-    // 应用缩放变换（以中心为基准）
-    bloodlineCtx.translate(centerX, centerY);
-    bloodlineCtx.scale(bloodlineScale, bloodlineScale);
-    bloodlineCtx.translate(-centerX, -centerY);
-    
-    // 绘制边
-    bloodlineCtx.strokeStyle = '#cbd5e0';
-    bloodlineCtx.lineWidth = 2;
-    
-    bloodlineEdges.forEach(edge => {
-        const source = bloodlineNodes.find(n => n.id === edge.source);
-        const target = bloodlineNodes.find(n => n.id === edge.target);
+// 力导向算法
+function applyForces() {
+    const canvas = document.getElementById('bloodline-canvas');
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const baseRepulsion = 3000;
+    const strongRepulsion = 8000;
+    const attraction = 0.008;
+    const damping = 0.96;
+    const centerGravity = 0.001;
+    const maxVelocity = 12;
+
+    // 节点间排斥力
+    for (let i = 0; i < bloodlineNodes.length; i++) {
+        for (let j = i + 1; j < bloodlineNodes.length; j++) {
+            const node1 = bloodlineNodes[i];
+            const node2 = bloodlineNodes[j];
+            const dx = node2.x - node1.x;
+            const dy = node2.y - node1.y;
+            const rawDist = Math.sqrt(dx * dx + dy * dy);
+            
+            const minDist = node1.radius + node2.radius + 25;
+            const dist = rawDist < 15 ? 15 : rawDist;
+            
+            let repulsion = baseRepulsion;
+            
+            if (dist < minDist) {
+                const factor = Math.min(4, minDist / dist);
+                repulsion = strongRepulsion * factor;
+            }
+            
+            if (node1.type === 'center' && node2.type === 'center') {
+                repulsion *= 1.5;
+            }
+            
+            const force = repulsion / (dist * dist);
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+            
+            node1.vx -= fx * 0.5;
+            node1.vy -= fy * 0.5;
+            node2.vx += fx * 0.5;
+            node2.vy += fy * 0.5;
+        }
+    }
+
+    // 连线吸引力
+    bloodlineLinks.forEach(link => {
+        const source = bloodlineNodes.find(n => n.id === link.source);
+        const target = bloodlineNodes.find(n => n.id === link.target);
         
         if (source && target) {
-            bloodlineCtx.beginPath();
-            bloodlineCtx.moveTo(source.x, source.y);
-            bloodlineCtx.lineTo(target.x, target.y);
-            bloodlineCtx.stroke();
+            const dx = target.x - source.x;
+            const dy = target.y - source.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
             
-            // 绘制箭头
-            const angle = Math.atan2(target.y - source.y, target.x - source.x);
-            const arrowLength = 10;
+            let targetDist = 250;
+            if (source.type === 'center' && target.type === 'center') {
+                targetDist = 350;
+            }
             
-            bloodlineCtx.beginPath();
-            bloodlineCtx.moveTo(target.x, target.y);
-            bloodlineCtx.lineTo(
-                target.x - arrowLength * Math.cos(angle - Math.PI / 6),
-                target.y - arrowLength * Math.sin(angle - Math.PI / 6)
-            );
-            bloodlineCtx.moveTo(target.x, target.y);
-            bloodlineCtx.lineTo(
-                target.x - arrowLength * Math.cos(angle + Math.PI / 6),
-                target.y - arrowLength * Math.sin(angle + Math.PI / 6)
-            );
-            bloodlineCtx.stroke();
+            const force = (dist - targetDist) * attraction;
+            const fx = (dx / dist) * force;
+            const fy = (dy / dist) * force;
+            
+            source.vx += fx;
+            source.vy += fy;
+            target.vx -= fx;
+            target.vy -= fy;
         }
     });
-    
-    // 绘制节点
+
+    // 分层引力：保持节点在各自区域
     bloodlineNodes.forEach(node => {
-        const colors = {
-            'metric': '#667eea',
-            'upstream': '#48bb78',
-            'downstream': '#ed8936'
-        };
-        
-        const baseRadius = node.type === 'metric' ? 30 : 22;
-        const nodeRadius = baseRadius;  // 节点大小保持不变，只缩放位置
-        
-        // 绘制阴影
-        bloodlineCtx.shadowColor = 'rgba(0, 0, 0, 0.2)';
-        bloodlineCtx.shadowBlur = 10;
-        bloodlineCtx.shadowOffsetX = 2;
-        bloodlineCtx.shadowOffsetY = 2;
-        
-        // 绘制圆球
-        bloodlineCtx.fillStyle = colors[node.type] || '#667eea';
-        bloodlineCtx.beginPath();
-        bloodlineCtx.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2);
-        bloodlineCtx.fill();
-        
-        // 重置阴影
-        bloodlineCtx.shadowColor = 'transparent';
-        
-        // 绘制文字 - 根据圆球大小和文字长度调整字体
-        bloodlineCtx.fillStyle = 'white';
-        bloodlineCtx.textAlign = 'center';
-        bloodlineCtx.textBaseline = 'middle';
-        
-        // 根据文字长度选择显示方式
-        const maxDisplayLength = node.type === 'metric' ? 6 : 5;
-        const displayName = node.name.length > maxDisplayLength 
-            ? node.name.substring(0, maxDisplayLength) + '.' 
-            : node.name;
-        
-        // 动态计算字体大小
-        const baseFontSize = node.type === 'metric' ? 11 : 10;
-        const fontSize = Math.max(8, baseFontSize - Math.floor(displayName.length / 2));
-        bloodlineCtx.font = `bold ${fontSize}px Arial, Microsoft YaHei, sans-serif`;
-        
-        // 计算文字宽度，确保在圆球内
-        const textWidth = bloodlineCtx.measureText(displayName).width;
-        const maxTextWidth = (nodeRadius - 4) * 2;
-        
-        // 如果文字太宽，进一步缩小字体
-        if (textWidth > maxTextWidth) {
-            const scaleFactor = maxTextWidth / textWidth;
-            const adjustedFontSize = Math.max(6, Math.floor(fontSize * scaleFactor));
-            bloodlineCtx.font = `bold ${adjustedFontSize}px Arial, Microsoft YaHei, sans-serif`;
+        let targetY = centerY;
+        if (node.type === 'upstream') {
+            targetY = canvas.height * 0.25;
+        } else if (node.type === 'downstream') {
+            targetY = canvas.height * 0.75;
         }
         
-        bloodlineCtx.fillText(displayName, node.x, node.y);
-        
-        // 指标节点添加图标
-        if (node.type === 'metric') {
-            bloodlineCtx.font = '14px FontAwesome';
-            bloodlineCtx.fillText('\uf080', node.x, node.y - nodeRadius - 5);
-        }
+        const dy = targetY - node.y;
+        node.vy += dy * 0.003;
     });
-    
-    // 恢复上下文状态
-    bloodlineCtx.restore();
+
+    // 更新位置并限制边界
+    bloodlineNodes.forEach(node => {
+        node.vx *= damping;
+        node.vy *= damping;
+        
+        // 速度限制，防止颤抖
+        const speed = Math.sqrt(node.vx * node.vx + node.vy * node.vy);
+        if (speed > maxVelocity) {
+            node.vx = (node.vx / speed) * maxVelocity;
+            node.vy = (node.vy / speed) * maxVelocity;
+        }
+        
+        node.x += node.vx;
+        node.y += node.vy;
+        
+        // 边界限制（增加边界缓冲区域）
+        const margin = 50;
+        node.x = Math.max(node.radius + margin, Math.min(canvas.width - node.radius - margin, node.x));
+        node.y = Math.max(node.radius + margin, Math.min(canvas.height - node.radius - margin, node.y));
+    });
 }
 
-// 处理节点点击
-function handleBloodlineClick(event) {
-    const rect = bloodlineCanvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left - bloodlineCanvas.width / 2) / bloodlineScale + bloodlineCanvas.width / 2;
-    const y = (event.clientY - rect.top - bloodlineCanvas.height / 2) / bloodlineScale + bloodlineCanvas.height / 2;
+// 绘制节点
+function drawNode(node) {
+    const ctx = bloodlineCtx;
     
-    bloodlineNodes.forEach(node => {
-        const dx = x - node.x;
-        const dy = y - node.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        
-        if (dist < 30) {
-            showNodeInfo(node);
-        }
-    });
-}
-// 处理鼠标悬停
-let hoveredNode = null;
+    // 选中状态发光效果
+    if (selectedNode === node.id) {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius + 10, 0, Math.PI * 2);
+        ctx.fillStyle = node.color + '30';
+        ctx.fill();
+    }
 
-function handleBloodlineHover(event) {
-    const rect = bloodlineCanvas.getBoundingClientRect();
-    const x = (event.clientX - rect.left - bloodlineCanvas.width / 2) / bloodlineScale + bloodlineCanvas.width / 2;
-    const y = (event.clientY - rect.top - bloodlineCanvas.height / 2) / bloodlineScale + bloodlineCanvas.height / 2;
+    // 外发光
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, node.radius + 5, 0, Math.PI * 2);
+    ctx.fillStyle = node.color + '20';
+    ctx.fill();
+
+    // 节点主体
+    const gradient = ctx.createRadialGradient(
+        node.x - node.radius * 0.3, node.y - node.radius * 0.3, 0,
+        node.x, node.y, node.radius
+    );
+    gradient.addColorStop(0, '#ffffff');
+    gradient.addColorStop(0.4, node.color);
+    gradient.addColorStop(1, adjustColor(node.color, -30));
+
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+    ctx.fillStyle = gradient;
+    ctx.fill();
     
-    hoveredNode = null;
-    bloodlineNodes.forEach(node => {
-        const dx = x - node.x;
-        const dy = y - node.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        
-        if (dist < 30) {
-            hoveredNode = node;
-            bloodlineCanvas.style.cursor = 'pointer';
-        }
-    });
+    ctx.beginPath();
+    ctx.arc(node.x, node.y, node.radius, 0, Math.PI * 2);
+    ctx.strokeStyle = adjustColor(node.color, 20);
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // 中心节点特殊标记
+    if (node.type === 'center') {
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius * 0.6, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(node.x, node.y, node.radius * 0.6, 0, Math.PI * 2);
+        ctx.strokeStyle = node.color;
+        ctx.lineWidth = 3;
+        ctx.stroke();
+    }
+
+    // 节点名称
+    ctx.fillStyle = '#2d3748';
+    ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
     
-    if (!hoveredNode) {
-        bloodlineCanvas.style.cursor = 'default';
+    const text = node.name.length > 6 ? node.name.substring(0, 6) + '...' : node.name;
+    ctx.fillText(text, node.x, node.y + node.radius + 18);
+}
+
+// 绘制连线
+function drawLink(link) {
+    const ctx = bloodlineCtx;
+    const source = bloodlineNodes.find(n => n.id === link.source);
+    const target = bloodlineNodes.find(n => n.id === link.target);
+    
+    if (!source || !target) return;
+
+    const isSelected = selectedNode === source.id || selectedNode === target.id;
+    
+    ctx.beginPath();
+    ctx.moveTo(source.x, source.y);
+    
+    // 计算控制点，创建曲线
+    const midX = (source.x + target.x) / 2;
+    const midY = (source.y + target.y) / 2;
+    const dx = target.x - source.x;
+    const dy = target.y - source.y;
+    const perpX = -dy * 0.1;
+    const perpY = dx * 0.1;
+    
+    ctx.quadraticCurveTo(
+        midX + perpX, midY + perpY,
+        target.x, target.y
+    );
+    
+    ctx.strokeStyle = isSelected ? '#667eea' : '#cbd5e0';
+    ctx.lineWidth = isSelected ? 3 : 2;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // 箭头
+    if (link.type === 'upstream') {
+        drawArrow(target.x, target.y, source.x, source.y, isSelected ? '#667eea' : '#cbd5e0');
+    } else {
+        drawArrow(source.x, source.y, target.x, target.y, isSelected ? '#667eea' : '#cbd5e0');
     }
 }
 
-// 显示节点信息
+// 绘制箭头
+function drawArrow(fromX, fromY, toX, toY, color) {
+    const ctx = bloodlineCtx;
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    const arrowLength = 10;
+    const arrowWidth = 6;
+    
+    ctx.beginPath();
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(
+        toX - arrowLength * Math.cos(angle - arrowWidth / 10),
+        toY - arrowLength * Math.sin(angle - arrowWidth / 10)
+    );
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(
+        toX - arrowLength * Math.cos(angle + arrowWidth / 10),
+        toY - arrowLength * Math.sin(angle + arrowWidth / 10)
+    );
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+}
+
+// 颜色调整
+function adjustColor(color, amount) {
+    const hex = color.replace('#', '');
+    const r = Math.max(0, Math.min(255, parseInt(hex.substr(0, 2), 16) + amount));
+    const g = Math.max(0, Math.min(255, parseInt(hex.substr(2, 2), 16) + amount));
+    const b = Math.max(0, Math.min(255, parseInt(hex.substr(4, 2), 16) + amount));
+    return '#' + r.toString(16).padStart(2, '0') + g.toString(16).padStart(2, '0') + b.toString(16).padStart(2, '0');
+}
+
+// 动画循环
+function animate() {
+    const canvas = document.getElementById('bloodline-canvas');
+    bloodlineCtx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // 绘制背景网格（不缩放）
+    drawGrid();
+
+    // 应用变换（缩放和平移）
+    bloodlineCtx.save();
+    bloodlineCtx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY);
+    bloodlineCtx.scale(scale, scale);
+    bloodlineCtx.translate(-canvas.width / 2, -canvas.height / 2);
+
+    // 应用力
+    applyForces();
+
+    // 绘制连线
+    bloodlineLinks.forEach(drawLink);
+
+    // 绘制节点
+    bloodlineNodes.forEach(drawNode);
+
+    // 恢复变换
+    bloodlineCtx.restore();
+
+    animationId = requestAnimationFrame(animate);
+}
+
+// 绘制背景网格
+function drawGrid() {
+    const ctx = bloodlineCtx;
+    const canvas = document.getElementById('bloodline-canvas');
+    const gridSize = 30;
+    
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    
+    for (let x = 0; x <= canvas.width; x += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, canvas.height);
+        ctx.stroke();
+    }
+    
+    for (let y = 0; y <= canvas.height; y += gridSize) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(canvas.width, y);
+        ctx.stroke();
+    }
+}
+
+// 滚轮缩放事件
+function onCanvasWheel(e) {
+    e.preventDefault();
+    const canvas = document.getElementById('bloodline-canvas');
+    
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    const newScale = Math.max(0.3, Math.min(3, scale + delta));
+    
+    // 计算鼠标位置相对于画布中心的偏移
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    // 缩放时保持鼠标位置不变
+    const worldX = (mouseX - canvas.width / 2 - offsetX) / scale;
+    const worldY = (mouseY - canvas.height / 2 - offsetY) / scale;
+    
+    scale = newScale;
+    offsetX = mouseX - canvas.width / 2 - worldX * scale;
+    offsetY = mouseY - canvas.height / 2 - worldY * scale;
+}
+
+// 鼠标按下事件（开始拖拽）
+function onCanvasMouseDown(e) {
+    const canvas = document.getElementById('bloodline-canvas');
+    const container = document.querySelector('.bloodline-canvas-container');
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    
+    // 将鼠标坐标转换为画布坐标（考虑画布缩放）
+    const canvasX = mouseX * (canvas.width / container.clientWidth);
+    const canvasY = mouseY * (canvas.height / container.clientHeight);
+    
+    // 将画布坐标转换为世界坐标（考虑视口缩放和偏移）
+    const worldX = (canvasX - canvas.width / 2 - offsetX) / scale + canvas.width / 2;
+    const worldY = (canvasY - canvas.height / 2 - offsetY) / scale + canvas.height / 2;
+    
+    // 先检测是否点击了节点
+    const clickedNode = findNodeAtPosition(worldX, worldY);
+    
+    if (clickedNode && e.button === 0) {
+        // 左键点击节点，开始拖拽节点
+        e.preventDefault();
+        draggingNode = clickedNode;
+        dragNodeOffsetX = worldX - clickedNode.x;
+        dragNodeOffsetY = worldY - clickedNode.y;
+        selectedNode = clickedNode.id;
+        showNodeInfo(clickedNode);
+    } else if (e.button === 1 || e.button === 0) {
+        // 左键点击空白处或中键，平移画布
+        e.preventDefault();
+        isDragging = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        dragOffsetX = offsetX;
+        dragOffsetY = offsetY;
+        hasMoved = false;
+    }
+}
+
+// 鼠标移动事件（拖拽）
+function onCanvasDrag(e) {
+    const canvas = document.getElementById('bloodline-canvas');
+    const container = document.querySelector('.bloodline-canvas-container');
+    const rect = canvas.getBoundingClientRect();
+    
+    if (draggingNode) {
+        // 拖拽节点
+        e.preventDefault();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        // 将鼠标坐标转换为画布坐标（考虑画布缩放）
+        const canvasX = mouseX * (canvas.width / container.clientWidth);
+        const canvasY = mouseY * (canvas.height / container.clientHeight);
+        
+        // 将画布坐标转换为世界坐标（考虑视口缩放和偏移）
+        const worldX = (canvasX - canvas.width / 2 - offsetX) / scale + canvas.width / 2;
+        const worldY = (canvasY - canvas.height / 2 - offsetY) / scale + canvas.height / 2;
+        
+        // 更新节点位置
+        draggingNode.x = worldX - dragNodeOffsetX;
+        draggingNode.y = worldY - dragNodeOffsetY;
+        
+        // 限制在画布内
+        const margin = 50;
+        draggingNode.x = Math.max(draggingNode.radius + margin, Math.min(canvas.width - draggingNode.radius - margin, draggingNode.x));
+        draggingNode.y = Math.max(draggingNode.radius + margin, Math.min(canvas.height - draggingNode.radius - margin, draggingNode.y));
+        
+        // 重置速度，防止拖拽后节点继续移动
+        draggingNode.vx = 0;
+        draggingNode.vy = 0;
+    } else if (isDragging) {
+        // 平移画布
+        e.preventDefault();
+        offsetX = dragOffsetX + (e.clientX - dragStartX);
+        offsetY = dragOffsetY + (e.clientY - dragStartY);
+        hasMoved = true;
+    }
+}
+
+// 鼠标释放事件（结束拖拽）
+function onCanvasMouseUp(e) {
+    draggingNode = null;
+    isDragging = false;
+}
+
+// 在指定位置查找节点
+function findNodeAtPosition(x, y) {
+    for (let i = bloodlineNodes.length - 1; i >= 0; i--) {
+        const node = bloodlineNodes[i];
+        const dx = x - node.x;
+        const dy = y - node.y;
+        if (dx * dx + dy * dy <= node.radius * node.radius) {
+            return node;
+        }
+    }
+    return null;
+}
+
+// 画布点击事件（仅处理点击空白区域）
+function onCanvasClick(e) {
+    const canvas = document.getElementById('bloodline-canvas');
+    const container = document.querySelector('.bloodline-canvas-container');
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    // 将鼠标坐标转换为画布坐标（考虑画布缩放）
+    const canvasX = mouseX * (canvas.width / container.clientWidth);
+    const canvasY = mouseY * (canvas.height / container.clientHeight);
+    
+    // 将画布坐标转换为世界坐标（考虑视口缩放和偏移）
+    const worldX = (canvasX - canvas.width / 2 - offsetX) / scale + canvas.width / 2;
+    const worldY = (canvasY - canvas.height / 2 - offsetY) / scale + canvas.height / 2;
+
+    const clickedNode = findNodeAtPosition(worldX, worldY);
+
+    if (!clickedNode) {
+        selectedNode = null;
+        closeInfoPanel();
+    }
+}
+
+// 鼠标移动事件
+function onCanvasMouseMove(e) {
+    const canvas = document.getElementById('bloodline-canvas');
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    let hoveredNode = false;
+    for (const node of bloodlineNodes) {
+        const dx = x - node.x;
+        const dy = y - node.y;
+        if (dx * dx + dy * dy <= node.radius * node.radius) {
+            hoveredNode = true;
+            break;
+        }
+    }
+    
+    canvas.style.cursor = hoveredNode ? 'pointer' : 'default';
+}
+
+// 显示节点信息面板
 function showNodeInfo(node) {
     const panel = document.getElementById('bloodline-info-panel');
     const content = document.getElementById('info-panel-content');
     
     let html = `
         <div class="info-row">
-            <span class="info-label">节点名称</span>
+            <span class="info-label">名称</span>
             <span class="info-value">${node.name}</span>
         </div>
         <div class="info-row">
-            <span class="info-label">节点类型</span>
-            <span class="info-value">${node.type === 'metric' ? '核心指标' : node.type === 'upstream' ? '上游数据源' : '下游应用'}</span>
+            <span class="info-label">类型</span>
+            <span class="info-value">${getNodeTypeName(node.type)}</span>
         </div>
     `;
-    
-    if (node.upstream && node.upstream.length > 0) {
+
+    if (node.data.fields) {
         html += `
             <div class="info-fields">
-                <div class="info-fields-title">上游数据源</div>
-                ${node.upstream.map(item => `<span class="info-field-tag">${item.name || item}</span>`).join('')}
+                <div class="info-fields-title">包含字段</div>
+                ${node.data.fields.map(field => `<span class="info-field-tag">${field}</span>`).join('')}
             </div>
         `;
     }
-    
-    if (node.downstream && node.downstream.length > 0) {
+
+    if (node.data.location) {
         html += `
-            <div class="info-fields">
-                <div class="info-fields-title">下游应用</div>
-                ${node.downstream.map(item => `<span class="info-field-tag">${item.name || item}</span>`).join('')}
+            <div class="info-row">
+                <span class="info-label">位置</span>
+                <span class="info-value">${node.data.location}</span>
             </div>
         `;
     }
-    
-    // 如果是核心指标，添加查看指标明细按钮
-    if (node.type === 'metric' && node.id) {
+
+    if (node.type === 'center') {
         html += `
-            <div class="info-actions">
-                <button class="btn btn-primary btn-sm" onclick="showMetricDetail('${node.id}'); closeInfoPanel();">
-                    <i class="fas fa-chart-bar"></i> 查看指标明细
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="showMetricDetail('${node.data.metricId}')">
+                    查看指标详情
+                </button>
+            </div>
+        `;
+    } else {
+        html += `
+            <div style="margin-top: 15px;">
+                <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="showDataPreview('${node.name}', '${node.data.type || '表'}')">
+                    查看数据预览
                 </button>
             </div>
         `;
     }
-    
+
     content.innerHTML = html;
     panel.classList.add('show');
 }
 
+// 获取节点类型名称
+function getNodeTypeName(type) {
+    const names = {
+        'center': '核心指标',
+        'upstream': '上游数据源',
+        'downstream': '下游应用'
+    };
+    return names[type] || type;
+}
+
 // 关闭信息面板
 function closeInfoPanel() {
-    document.getElementById('bloodline-info-panel').classList.remove('show');
-}
-
-// 缩放功能
-let bloodlineScale = 1;
-const minScale = 0.5;
-const maxScale = 2.5;
-const scaleStep = 0.1;
-
-// 放大
-function zoomIn() {
-    if (bloodlineScale < maxScale) {
-        bloodlineScale += scaleStep;
-        updateZoomDisplay();
-        drawBloodlineGraph();
-    }
-}
-
-// 缩小
-function zoomOut() {
-    if (bloodlineScale > minScale) {
-        bloodlineScale -= scaleStep;
-        updateZoomDisplay();
-        drawBloodlineGraph();
-    }
-}
-
-// 重置缩放
-function resetZoom() {
-    bloodlineScale = 1;
-    updateZoomDisplay();
-    drawBloodlineGraph();
-}
-
-// 更新缩放显示
-function updateZoomDisplay() {
-    const zoomValue = document.getElementById('zoom-value');
-    if (zoomValue) {
-        zoomValue.textContent = Math.round(bloodlineScale * 100) + '%';
-    }
-}
-
-// 滚轮缩放处理
-function handleWheelZoom(event) {
-    event.preventDefault();
-    
-    // 根据滚轮方向调整缩放
-    const delta = event.deltaY > 0 ? -scaleStep : scaleStep;
-    const newScale = bloodlineScale + delta;
-    
-    // 限制缩放范围
-    if (newScale >= minScale && newScale <= maxScale) {
-        bloodlineScale = newScale;
-        updateZoomDisplay();
-        drawBloodlineGraph();
-    }
+    const panel = document.getElementById('bloodline-info-panel');
+    panel.classList.remove('show');
 }
 
 // 加载预警数据
@@ -2254,8 +2604,8 @@ function showLLMConfigModal() {
     document.getElementById('llm-config-modal').classList.add('show');
 }
 
-// 保存LLM配置
-function saveLLMConfig() {
+// 保存LLM配置（模态框版本）
+function saveLLMConfigModal() {
     closeModal('llm-config-modal');
     document.getElementById('llm-config-status').textContent = '已配置';
 }
@@ -2269,45 +2619,32 @@ function showReportModal() {
 function generateReport() {
     closeModal('report-modal');
     
+    const title = document.getElementById('report-title').value || '运营数据分析报告';
+    const reportContent = document.getElementById('report-content');
+    
+    reportContent.textContent = '正在调用AI生成报告，请稍候...';
     document.getElementById('report-result').style.display = 'block';
-    document.getElementById('report-content').textContent = `【数据分析报告】
-
-报告标题：${document.getElementById('report-title').value || '运营数据分析报告'}
-生成时间：${new Date().toLocaleString('zh-CN')}
-
-一、核心指标概览
-
-1. 净利润率
-   - 当前值：15.2%
-   - 同比增长：+1.2%
-   - 环比增长：+0.8%
-
-2. ROE（净资产收益率）
-   - 当前值：12.8%
-   - 同比增长：+0.5%
-
-3. 不良贷款率
-   - 当前值：1.8%
-   - 同比下降：-0.3%
-
-4. 流动性比率
-   - 当前值：58.6%
-   - 环比增长：+3.2%
-
-二、关键发现
-
-1. 盈利能力保持稳定增长态势
-2. 资产质量持续改善，不良贷款率稳步下降
-3. 流动性状况良好，资金安全边际充足
-
-三、建议
-
-1. 持续关注不良贷款变化趋势
-2. 优化资金配置，提高资金使用效率
-3. 加强成本管控，提升盈利能力
-
----
-本报告由AI自动生成`;
+    
+    fetch('/api/ai/generate_report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            metric_ids: [],
+            type: 'detailed',
+            title: title
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            reportContent.textContent = data.report;
+        } else {
+            reportContent.textContent = `生成失败：${data.error || '未知错误'}\n\n请在配置页面输入有效的API密钥`;
+        }
+    })
+    .catch(error => {
+        reportContent.textContent = `生成失败：${error.message || '网络错误'}`;
+    });
 }
 
 // 复制报告
@@ -2320,68 +2657,74 @@ function copyReport() {
 
 // 运行智能分析
 function runIntelligentAnalysis() {
+    const analysisContent = document.getElementById('analysis-content');
+    
+    analysisContent.textContent = '正在调用AI进行智能分析，请稍候...';
     document.getElementById('analysis-result').style.display = 'block';
-    document.getElementById('analysis-content').textContent = `【AI智能分析结果】
-
-分析时间：${new Date().toLocaleString('zh-CN')}
-
-一、指标健康度分析
-
-1. 原子指标健康度：85%（良好）
-   - 数据完整性：92%
-   - 数据准确性：88%
-   - 更新及时性：85%
-
-2. 派生指标健康度：72%（一般）
-   - 计算逻辑一致性：78%
-   - 数据源可靠性：75%
-
-3. 复合指标健康度：55%（待优化）
-   - 建议：加强数据质量管理
-
-二、趋势预测
-
-基于历史数据分析，预测下一周期：
-- 净利润率预计保持在14.8%-15.5%区间
-- 不良贷款率有望进一步下降至1.6%左右
-- 流动性比率预计维持在55%-60%
-
-三、风险预警
-
-⚠️ 预警项：
-1. 流动性比率接近预警线，建议关注
-2. 部分指标数据延迟超过24小时
-
-四、改进建议
-
-1. 优化数据采集流程，减少数据延迟
-2. 加强复合指标的数据校验规则
-3. 建立定期数据质量巡检机制`;
+    
+    fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            metric_ids: [],
+            type: 'detailed'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            analysisContent.textContent = data.analysis;
+        } else {
+            analysisContent.textContent = `分析失败：${data.error || '未知错误'}\n\n请在配置页面输入有效的API密钥`;
+        }
+    })
+    .catch(error => {
+        analysisContent.textContent = `分析失败：${error.message || '网络错误'}`;
+    });
 }
 
 // 显示指标解读
 function showInterpretation() {
+    const interpretationContent = document.getElementById('interpretation-content');
+    
+    interpretationContent.innerHTML = '<div style="text-align: center; padding: 20px;">正在调用AI解读指标，请稍候...</div>';
     document.getElementById('agent-interpretation').style.display = 'block';
-    document.getElementById('interpretation-content').innerHTML = `
-        <div class="interpretation-item">
-            <h4><i class="fas fa-lightbulb"></i> 净利润率</h4>
-            <p><strong>定义：</strong>净利润与营业收入的比率，反映企业盈利能力</p>
-            <p><strong>业务含义：</strong>该指标越高，说明企业盈利能力越强，每一元收入带来的净利润越多。</p>
-            <p><strong>关注要点：</strong>结合行业平均水平对比，分析成本控制和收入结构变化。</p>
-        </div>
-        <div class="interpretation-item">
-            <h4><i class="fas fa-lightbulb"></i> ROE（净资产收益率）</h4>
-            <p><strong>定义：</strong>净利润与平均股东权益的比率</p>
-            <p><strong>业务含义：</strong>衡量股东权益的回报水平，反映企业运用自有资本的效率。</p>
-            <p><strong>关注要点：</strong>与行业标杆对比，分析资本运作效率。</p>
-        </div>
-        <div class="interpretation-item">
-            <h4><i class="fas fa-lightbulb"></i> 不良贷款率</h4>
-            <p><strong>定义：</strong>不良贷款占总贷款的比例</p>
-            <p><strong>业务含义：</strong>反映信贷资产质量，是风险管理的核心指标。</p>
-            <p><strong>关注要点：</strong>跟踪变化趋势，及时发现风险隐患。</p>
-        </div>
-    `;
+    
+    fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            metric_ids: [],
+            type: 'summary'
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            interpretationContent.innerHTML = `
+                <div class="interpretation-item">
+                    <h4><i class="fas fa-lightbulb"></i> 智能指标解读</h4>
+                    <p>${data.analysis}</p>
+                </div>
+            `;
+        } else {
+            interpretationContent.innerHTML = `
+                <div class="interpretation-item">
+                    <h4><i class="fas fa-exclamation-circle"></i> 解读失败</h4>
+                    <p>${data.error || '未知错误'}</p>
+                    <p style="font-size: 12px; color: #8898aa;">请在配置页面输入有效的API密钥</p>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        interpretationContent.innerHTML = `
+            <div class="interpretation-item">
+                <h4><i class="fas fa-exclamation-circle"></i> 网络错误</h4>
+                <p>${error.message || '无法连接到服务器'}</p>
+            </div>
+        `;
+    });
 }
 
 // 提交问题
@@ -2393,29 +2736,28 @@ function submitQuestion() {
     document.getElementById('ask-result').style.display = 'none';
     document.getElementById('ask-error').style.display = 'none';
 
-    setTimeout(() => {
+    fetch('/api/ai/ask', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ question: question })
+    })
+    .then(res => res.json())
+    .then(data => {
         document.getElementById('ask-loading').style.display = 'none';
-        document.getElementById('ask-question').textContent = question;
-        document.getElementById('ask-answer').textContent = `根据您的问题，以下是相关分析：
-
-基于系统中的指标数据，我为您分析如下：
-
-1. **指标概览**：系统共包含17个核心指标，涵盖财务、风险、资金等多个维度
-
-2. **热门指标**：
-   - 净利润率（热度98）：反映企业盈利能力
-   - 不良贷款率（热度96）：反映信贷资产质量
-   - ROE（热度94）：衡量股东权益回报
-
-3. **趋势分析**：
-   近期整体指标表现稳健，净利润率保持在15%左右，不良贷款率呈下降趋势
-
-4. **建议关注**：
-   流动性比率接近预警线，建议持续关注资金状况
-
-如需更详细的分析，请提供具体指标名称或时间段。`;
-        document.getElementById('ask-result').style.display = 'block';
-    }, 1500);
+        if (data.success) {
+            document.getElementById('ask-question').textContent = question;
+            document.getElementById('ask-answer').textContent = data.answer;
+            document.getElementById('ask-result').style.display = 'block';
+        } else {
+            document.getElementById('ask-error-msg').textContent = data.error || '未知错误';
+            document.getElementById('ask-error').style.display = 'block';
+        }
+    })
+    .catch(error => {
+        document.getElementById('ask-loading').style.display = 'none';
+        document.getElementById('ask-error-msg').textContent = error.message || '网络错误';
+        document.getElementById('ask-error').style.display = 'block';
+    });
 }
 
 // 关闭弹窗
@@ -2672,6 +3014,585 @@ function showDataPreview(tableName, type) {
                 </div>
             `;
         });
+}
+
+// ==================== AI分析和BI报表功能 ====================
+
+let currentAITab = 'insights';
+
+function switchAITab(tab) {
+    currentAITab = tab;
+    
+    document.querySelectorAll('.ai-tab').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.tab === tab) {
+            btn.classList.add('active');
+        }
+    });
+    
+    document.querySelectorAll('.ai-tab-panel').forEach(content => {
+        content.style.display = 'none';
+    });
+    
+    document.getElementById('ai-' + tab + '-panel').style.display = 'flex';
+    
+    if (tab === 'config') {
+        loadLLMConfig();
+    }
+    
+    if (tab === 'insights' && selectedMetrics.length > 0) {
+        fetchAIInsights();
+    }
+}
+
+function fetchAIInsights() {
+    if (selectedMetrics.length === 0) return;
+    
+    const metricIds = selectedMetrics.map(m => m.id);
+    const container = document.getElementById('ai-insights-list');
+    const emptyState = document.getElementById('ai-insights-empty');
+    
+    container.innerHTML = '';
+    emptyState.style.display = 'none';
+    
+    fetch('/api/ai/insights', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ metric_ids: metricIds })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            renderInsights(data.insights);
+        } else {
+            container.innerHTML = `
+                <div class="ai-error" style="margin-top: 20px;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div class="ai-error-content">
+                        <h4>获取洞察失败</h4>
+                        <p>${data.error || '未知错误'}</p>
+                        <p class="ai-error-hint">请检查AI配置页面中的API密钥和模型设置</p>
+                    </div>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        container.innerHTML = `
+            <div class="ai-error" style="margin-top: 20px;">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="ai-error-content">
+                    <h4>网络请求失败</h4>
+                    <p>${error.message || '连接错误'}</p>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function renderInsights(insights) {
+    const container = document.getElementById('ai-insights-list');
+    const emptyState = document.getElementById('ai-insights-empty');
+    
+    if (!insights || insights.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'flex';
+        return;
+    }
+    
+    emptyState.style.display = 'none';
+    container.innerHTML = insights.map(insight => `
+        <div class="ai-insight-card ${insight.insight_type}">
+            <div class="ai-insight-header">
+                <span class="ai-insight-name">${insight.metric_name}</span>
+                <span class="ai-insight-type ${insight.insight_type}">
+                    ${insight.insight_type === 'alert' ? '预警' : insight.insight_type === 'trend' ? '趋势' : '正常'}
+                </span>
+            </div>
+            <div class="ai-insight-content">${insight.insight}</div>
+            <div class="ai-insight-recommendation">${insight.recommendation}</div>
+        </div>
+    `).join('');
+}
+
+function runAIAnalysis() {
+    if (selectedMetrics.length === 0) return;
+    
+    const metricIds = selectedMetrics.map(m => m.id);
+    const analysisType = document.getElementById('analysis-type').value;
+    const resultContainer = document.getElementById('ai-analysis-result');
+    
+    resultContainer.innerHTML = `
+        <div class="ai-loading">
+            <div class="ai-loading-spinner"></div>
+            <div class="ai-loading-text">AI正在分析数据...</div>
+        </div>
+    `;
+    
+    fetch('/api/ai/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            metric_ids: metricIds,
+            type: analysisType
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            resultContainer.innerHTML = `
+                <div class="markdown-content">
+                    ${convertMarkdownToHtml(data.analysis)}
+                </div>
+                <div class="ai-model-info">
+                    使用模型: ${data.model_used || '未知'}
+                </div>
+            `;
+        } else {
+            resultContainer.innerHTML = `
+                <div class="ai-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div class="ai-error-content">
+                        <h4>分析失败</h4>
+                        <p>${data.error || '未知错误'}</p>
+                        <p class="ai-error-hint">请检查AI配置页面中的API密钥和模型设置</p>
+                    </div>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        resultContainer.innerHTML = `
+            <div class="ai-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="ai-error-content">
+                    <h4>网络请求失败</h4>
+                    <p>${error.message || '连接错误'}</p>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function generateBIReport() {
+    if (selectedMetrics.length === 0) return;
+    
+    const metricIds = selectedMetrics.map(m => m.id);
+    const reportType = document.getElementById('report-type').value;
+    const title = document.getElementById('report-title-input').value || '指标分析报告';
+    const resultContainer = document.getElementById('ai-report-result');
+    
+    resultContainer.innerHTML = `
+        <div class="ai-loading">
+            <div class="ai-loading-spinner"></div>
+            <div class="ai-loading-text">正在生成BI报表...</div>
+        </div>
+    `;
+    
+    fetch('/api/ai/generate_report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+            metric_ids: metricIds,
+            type: reportType,
+            title: title
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            resultContainer.innerHTML = `
+                <div class="markdown-content">
+                    <h1>${data.title}</h1>
+                    ${convertMarkdownToHtml(data.report)}
+                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee; font-size: 11px; color: #8898aa;">
+                        生成时间: ${data.timestamp} | 使用模型: ${data.model_used || '未知'}
+                    </div>
+                </div>
+            `;
+        } else {
+            resultContainer.innerHTML = `
+                <div class="ai-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div class="ai-error-content">
+                        <h4>报表生成失败</h4>
+                        <p>${data.error || '未知错误'}</p>
+                        <p class="ai-error-hint">请检查AI配置页面中的API密钥和模型设置</p>
+                    </div>
+                </div>
+            `;
+        }
+    })
+    .catch(error => {
+        resultContainer.innerHTML = `
+            <div class="ai-error">
+                <i class="fas fa-exclamation-circle"></i>
+                <div class="ai-error-content">
+                    <h4>网络请求失败</h4>
+                    <p>${error.message || '连接错误'}</p>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function convertMarkdownToHtml(markdown) {
+    if (!markdown) return '';
+    
+    let html = markdown;
+    
+    html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
+    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
+    
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    
+    html = html.replace(/^\- (.*$)/gim, '<li>$1</li>');
+    html = html.replace(/^\d+\. (.*$)/gim, '<li>$1</li>');
+    
+    html = html.replace(/(<li>.*<\/li>)/gim, '<ul>$1</ul>');
+    html = html.replace(/<\/ul>\n<ul>/g, '');
+    
+    html = html.replace(/\|(.*)\|/g, function(match) {
+        const parts = match.split('|').filter(p => p.trim());
+        if (parts.length > 0) {
+            if (parts[0].includes('---')) {
+                return '';
+            }
+            return '<tr>' + parts.map(p => '<td>' + p.trim() + '</td>').join('') + '</tr>';
+        }
+        return match;
+    });
+    
+    html = html.replace(/(<tr>.*<\/tr>)/gim, '<table>$1</table>');
+    html = html.replace(/<\/table>\n<table>/g, '');
+    
+    html = html.replace(/\n/g, '<br>');
+    
+    return html;
+}
+
+// ==================== LLM配置管理 ====================
+let llmProviders = {};
+
+function getElement(id) {
+    const el = document.getElementById(id);
+    return el || null;
+}
+
+function toggleLLMEnabled() {
+    const enabled = document.getElementById('llm-enabled').checked;
+    const configForm = document.querySelector('.config-form');
+    const inputs = configForm.querySelectorAll('.form-input, .form-select');
+    
+    inputs.forEach(input => {
+        input.disabled = !enabled;
+    });
+}
+
+function onProviderChange() {
+    const provider = document.getElementById('llm-provider').value;
+    
+    const secretGroup = document.getElementById('llm-api-secret-group');
+    const baseUrlGroup = document.getElementById('llm-base-url-group');
+    const modelSelect = document.getElementById('llm-model');
+    const baseUrlInput = document.getElementById('llm-base-url');
+    
+    if (provider === 'spark') {
+        secretGroup.style.display = 'flex';
+    } else {
+        secretGroup.style.display = 'none';
+    }
+    
+    if (provider === 'custom') {
+        baseUrlGroup.style.display = 'flex';
+        baseUrlInput.required = true;
+    } else {
+        baseUrlGroup.style.display = 'flex';
+        baseUrlInput.required = false;
+    }
+    
+    if (llmProviders[provider]) {
+        const info = llmProviders[provider];
+        if (info.base_url) {
+            baseUrlInput.value = info.base_url;
+        }
+        if (info.models && info.models.length > 0) {
+            modelSelect.innerHTML = info.models.map(model => 
+                `<option value="${model}">${model}</option>`
+            ).join('');
+        }
+    }
+}
+
+function togglePassword(fieldId) {
+    const input = document.getElementById(fieldId);
+    const btn = input.nextElementSibling;
+    
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<i class="fas fa-eye-slash"></i>';
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<i class="fas fa-eye"></i>';
+    }
+}
+
+let currentConfigKey = 'default';
+
+function loadLLMConfig() {
+    fetch('/api/llm/config')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                llmProviders = data.providers || {};
+                
+                const configs = data.configs || {};
+                const activeKey = data.active_config || 'default';
+                const config = data.current_config || {};
+                
+                currentConfigKey = activeKey;
+                
+                const select = document.getElementById('llm-config-select');
+                select.innerHTML = '<option value="">选择配置...</option>';
+                for (const [key, cfg] of Object.entries(configs)) {
+                    const selected = key === activeKey ? 'selected' : '';
+                    select.innerHTML += `<option value="${key}" ${selected}>${cfg.name || key}</option>`;
+                }
+                
+                document.getElementById('llm-config-name').value = config.name || '';
+                document.getElementById('llm-enabled').checked = config.enabled || false;
+                document.getElementById('llm-provider').value = config.api_type || 'openai';
+                document.getElementById('llm-api-key').value = config.api_key || '';
+                document.getElementById('llm-api-secret').value = config.api_secret || '';
+                document.getElementById('llm-base-url').value = config.base_url || '';
+                document.getElementById('llm-model').value = config.model || 'gpt-4o-mini';
+                document.getElementById('llm-max-tokens').value = config.max_tokens || 2000;
+                document.getElementById('llm-temperature').value = config.temperature || 0.7;
+                
+                toggleLLMEnabled();
+                onProviderChange();
+                updateDeleteButton();
+                
+                showConfigStatus('info', '配置已加载');
+            }
+        })
+        .catch(error => {
+            showConfigStatus('error', '加载配置失败: ' + error.message);
+        });
+}
+
+function onConfigSelectChange() {
+    const select = document.getElementById('llm-config-select');
+    const key = select.value;
+    
+    if (!key) return;
+    
+    fetch('/api/llm/config')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                const configs = data.configs || {};
+                const config = configs[key] || {};
+                
+                currentConfigKey = key;
+                
+                document.getElementById('llm-config-name').value = config.name || '';
+                document.getElementById('llm-enabled').checked = config.enabled || false;
+                document.getElementById('llm-provider').value = config.api_type || 'openai';
+                document.getElementById('llm-api-key').value = config.api_key || '';
+                document.getElementById('llm-api-secret').value = config.api_secret || '';
+                document.getElementById('llm-base-url').value = config.base_url || '';
+                document.getElementById('llm-model').value = config.model || 'gpt-4o-mini';
+                document.getElementById('llm-max-tokens').value = config.max_tokens || 2000;
+                document.getElementById('llm-temperature').value = config.temperature || 0.7;
+                
+                toggleLLMEnabled();
+                onProviderChange();
+                updateDeleteButton();
+            }
+        });
+}
+
+function updateDeleteButton() {
+    const btn = document.getElementById('btn-delete-config');
+    if (currentConfigKey && currentConfigKey !== 'default') {
+        btn.disabled = false;
+    } else {
+        btn.disabled = true;
+    }
+}
+
+function addNewConfig() {
+    const name = prompt('请输入新配置名称:', '新配置');
+    if (!name) return;
+    
+    fetch('/api/llm/config/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: name,
+            enabled: true,
+            api_type: 'openai',
+            api_key: '',
+            base_url: 'https://api.openai.com/v1',
+            model: 'gpt-4o-mini',
+            max_tokens: 2000,
+            temperature: 0.7
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            loadLLMConfig();
+            showConfigStatus('success', '新配置已添加');
+        } else {
+            showConfigStatus('error', data.error || '添加失败');
+        }
+    });
+}
+
+function deleteCurrentConfig() {
+    if (!currentConfigKey || currentConfigKey === 'default') return;
+    
+    if (!confirm('确定要删除当前配置吗？')) return;
+    
+    fetch('/api/llm/config/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ config_key: currentConfigKey })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            loadLLMConfig();
+            showConfigStatus('success', '配置已删除');
+        } else {
+            showConfigStatus('error', data.error || '删除失败');
+        }
+    });
+}
+
+function saveLLMConfig() {
+    try {
+        const nameEl = getElement('llm-config-name');
+        const enabledEl = getElement('llm-enabled');
+        const providerEl = getElement('llm-provider');
+        const apiKeyEl = getElement('llm-api-key');
+        const apiSecretEl = getElement('llm-api-secret');
+        const baseUrlEl = getElement('llm-base-url');
+        const modelEl = getElement('llm-model');
+        const maxTokensEl = getElement('llm-max-tokens');
+        const temperatureEl = getElement('llm-temperature');
+        
+        if (!enabledEl || !providerEl || !apiKeyEl) {
+            console.error('LLM配置表单元素缺失');
+            showConfigStatus('error', '表单元素缺失，请刷新页面');
+            return;
+        }
+        
+        const config = {
+            config_key: currentConfigKey,
+            name: nameEl ? nameEl.value.trim() || '配置' + currentConfigKey : '配置' + currentConfigKey,
+            enabled: enabledEl.checked,
+            api_type: providerEl.value,
+            api_key: apiKeyEl.value,
+            api_secret: apiSecretEl ? apiSecretEl.value : '',
+            base_url: baseUrlEl ? baseUrlEl.value : '',
+            model: modelEl ? modelEl.value : '',
+            max_tokens: maxTokensEl ? parseInt(maxTokensEl.value) : 2000,
+            temperature: temperatureEl ? parseFloat(temperatureEl.value) : 0.7
+        };
+        
+        console.log('保存LLM配置:', config);
+        
+        fetch('/api/llm/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(config)
+        })
+        .then(res => {
+            if (!res.ok) {
+                throw new Error('HTTP error ' + res.status);
+            }
+            return res.json();
+        })
+        .then(data => {
+            console.log('保存结果:', data);
+            if (data.success) {
+                showConfigStatus('success', data.message);
+            } else {
+                showConfigStatus('error', data.message || '保存失败');
+            }
+        })
+        .catch(error => {
+            console.error('保存配置失败:', error);
+            showConfigStatus('error', '保存配置失败: ' + error.message);
+        });
+    } catch (e) {
+        console.error('saveLLMConfig异常:', e);
+        showConfigStatus('error', '保存配置异常: ' + e.message);
+    }
+}
+
+function testLLMConnection() {
+    const config = {
+        enabled: document.getElementById('llm-enabled').checked,
+        api_type: document.getElementById('llm-provider').value,
+        api_key: document.getElementById('llm-api-key').value,
+        api_secret: document.getElementById('llm-api-secret').value,
+        base_url: document.getElementById('llm-base-url').value,
+        model: document.getElementById('llm-model').value
+    };
+    
+    if (!config.api_key) {
+        showConfigStatus('error', '请先输入API密钥');
+        return;
+    }
+    
+    showConfigStatus('info', '正在测试连接...');
+    
+    fetch('/api/llm/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config)
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            showConfigStatus('success', data.message + ' - ' + data.response);
+        } else {
+            showConfigStatus('error', data.message);
+        }
+    })
+    .catch(error => {
+        showConfigStatus('error', '测试连接失败: ' + error.message);
+    });
+}
+
+function showConfigStatus(type, message) {
+    const statusEl = document.getElementById('config-status');
+    const iconEl = document.getElementById('status-icon');
+    const msgEl = document.getElementById('status-message');
+    
+    statusEl.className = 'config-status ' + type;
+    
+    const icons = {
+        success: '<i class="fas fa-check"></i>',
+        error: '<i class="fas fa-exclamation-circle"></i>',
+        info: '<i class="fas fa-info-circle"></i>'
+    };
+    
+    iconEl.innerHTML = icons[type];
+    msgEl.textContent = message;
+    statusEl.style.display = 'flex';
+    
+    setTimeout(() => {
+        if (type === 'success') {
+            statusEl.style.display = 'none';
+        }
+    }, 5000);
 }
 
 // 页面加载完成后初始化
