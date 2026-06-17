@@ -1,53 +1,331 @@
 <div id="page-market" class="page-section" style="display: none;">
-    <div class="market-layout">
-        <!-- 左侧指标卡片区域 -->
-        <div class="market-left">
-            <div class="filter-bar">
-                <input type="text" class="search-box" id="market-search" placeholder="搜索指标...">
-                <select class="form-control form-select" id="market-category" style="width: auto;">
-                    <option value="全部">全部分类</option>
-                    <option value="客户分析">客户分析</option>
-                    <option value="产品分析">产品分析</option>
-                    <option value="渠道分析">渠道分析</option>
-                    <option value="风险管理">风险管理</option>
-                    <option value="营销分析">营销分析</option>
-                    <option value="资金管理">资金管理</option>
-                    <option value="合规管理">合规管理</option>
-                    <option value="人力资源">人力资源</option>
-                    <option value="财务指标">财务指标</option>
-                </select>
-                <button class="btn btn-primary" onclick="searchMarket()">
-                    <i class="fas fa-search"></i>
+    <!-- 顶部工具栏 -->
+    <div class="market-header">
+        <div class="market-header-left">
+            <h2 class="market-title">指标市场</h2>
+            <p class="market-subtitle">发现和使用企业级指标资产</p>
+        </div>
+        <div class="market-header-right">
+            <div class="market-stats">
+                <div class="stat-item">
+                    <span class="stat-value" id="total-metrics">0</span>
+                    <span class="stat-label">总指标</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="authorized-metrics">0</span>
+                    <span class="stat-label">已授权</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="popular-metrics">0</span>
+                    <span class="stat-label">热门</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 搜索和筛选栏 -->
+    <div class="market-toolbar">
+        <div class="toolbar-left">
+            <div class="search-wrapper">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" id="market-search" placeholder="搜索指标名称、描述...">
+                <button class="search-clear" id="search-clear" style="display: none;" onclick="clearSearch()">
+                    <i class="fas fa-times"></i>
                 </button>
             </div>
-            <div class="market-grid" id="market-grid"></div>
+        </div>
+        <div class="toolbar-center">
+            <div class="filter-tabs">
+                <button class="filter-tab active" data-category="全部" onclick="filterByCategory('全部')">
+                    <i class="fas fa-layer-group"></i> 全部
+                </button>
+                <button class="filter-tab" data-category="财务指标" onclick="filterByCategory('财务指标')">
+                    <i class="fas fa-chart-line"></i> 财务
+                </button>
+                <button class="filter-tab" data-category="客户分析" onclick="filterByCategory('客户分析')">
+                    <i class="fas fa-users"></i> 客户
+                </button>
+                <button class="filter-tab" data-category="风险管理" onclick="filterByCategory('风险管理')">
+                    <i class="fas fa-shield-alt"></i> 风险
+                </button>
+                <button class="filter-tab" data-category="产品分析" onclick="filterByCategory('产品分析')">
+                    <i class="fas fa-box"></i> 产品
+                </button>
+                <button class="filter-tab" data-category="渠道分析" onclick="filterByCategory('渠道分析')">
+                    <i class="fas fa-network-wired"></i> 渠道
+                </button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <div class="sort-select-wrapper">
+                <i class="fas fa-sort-amount-down"></i>
+                <select class="sort-select" id="market-sort" onchange="sortMarket()">
+                    <option value="popularity">按热度排序</option>
+                    <option value="name">按名称排序</option>
+                    <option value="update">按更新时间排序</option>
+                </select>
+            </div>
+            <button class="btn btn-primary btn-icon" onclick="refreshMarket()">
+                <i class="fas fa-sync-alt"></i> 刷新
+            </button>
+        </div>
+    </div>
+
+    <!-- 主体内容区域 -->
+    <div class="market-body">
+        <!-- 左侧指标列表区域 -->
+        <div class="market-main">
+            <!-- 空状态 -->
+            <div class="empty-state" id="market-empty" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3 class="empty-title">未找到匹配的指标</h3>
+                <p class="empty-desc">尝试调整搜索条件或筛选选项</p>
+            </div>
+
+            <!-- 指标卡片网格 -->
+            <div class="market-cards-grid" id="market-grid"></div>
+
+            <!-- 加载更多 -->
+            <div class="load-more-container" id="load-more-container" style="display: none;">
+                <button class="btn btn-secondary btn-block" onclick="loadMoreMetrics()">
+                    <i class="fas fa-chevron-down"></i> 加载更多
+                </button>
+            </div>
         </div>
 
-        <!-- 右侧对比面板 -->
-        <div class="market-right" id="comparison-panel">
-            <div class="panel-header">
-                <h3 class="panel-title">
-                    <i class="fas fa-chart-line" style="margin-right: 8px;"></i>
-                    指标对比
-                </h3>
-                <button class="btn btn-secondary btn-sm" onclick="clearMetricSelection()">
-                    <i class="fas fa-times"></i> 清空
-                </button>
-            </div>
+        <!-- 右侧功能面板 -->
+        <div class="market-sidebar">
+            <!-- 选中指标面板 -->
+            <div class="sidebar-panel" id="selection-panel">
+                <div class="panel-header">
+                    <div class="panel-title-wrapper">
+                        <i class="fas fa-check-circle" style="color: #667eea;"></i>
+                        <span class="panel-title">已选指标</span>
+                    </div>
+                    <span class="panel-badge" id="selection-count">0/5</span>
+                </div>
+                
+                <div class="panel-content" id="selection-list">
+                    <div class="panel-empty">
+                        <i class="fas fa-hand-pointer"></i>
+                        <p>点击指标卡片添加到分析列表</p>
+                    </div>
+                </div>
 
-            <div class="selected-metrics-count" id="selected-count-display">已选 0 个指标（最多5个）</div>
-
-            <div class="selected-metrics-list" id="selected-metrics-list">
-                <div class="empty-selected-state">
-                    <i class="fas fa-hand-pointer"></i>
-                    <p>勾选或拖拽指标卡片<br>到此处添加对比</p>
+                <div class="panel-actions">
+                    <button class="btn btn-secondary btn-sm btn-block" onclick="clearAllSelection()">
+                        <i class="fas fa-trash"></i> 清空选择
+                    </button>
+                    <button class="btn btn-primary btn-sm btn-block" id="compare-btn" disabled onclick="openComparisonPage()">
+                        <i class="fas fa-balance-scale"></i> 指标对比
+                    </button>
                 </div>
             </div>
 
-            <div class="panel-footer">
-                <button class="btn btn-primary" onclick="openComparisonPage()" id="open-compare-btn" disabled>
-                    <i class="fas fa-balance-scale"></i> 打开对比
-                </button>
+            <!-- AI智能分析面板 -->
+            <div class="sidebar-panel ai-panel">
+                <div class="panel-header">
+                    <div class="panel-title-wrapper">
+                        <i class="fas fa-brain" style="color: #722ed1;"></i>
+                        <span class="panel-title">AI智能分析</span>
+                    </div>
+                </div>
+
+                <div class="ai-tabs">
+                    <button class="ai-tab active" data-tab="insights" onclick="switchAITab('insights')">
+                        <i class="fas fa-lightbulb"></i> 智能洞察
+                    </button>
+                    <button class="ai-tab" data-tab="analysis" onclick="switchAITab('analysis')">
+                        <i class="fas fa-chart-pie"></i> 深度分析
+                    </button>
+                    <button class="ai-tab" data-tab="report" onclick="switchAITab('report')">
+                        <i class="fas fa-file-alt"></i> BI报表
+                    </button>
+                    <button class="ai-tab" data-tab="config" onclick="switchAITab('config')">
+                        <i class="fas fa-cog"></i> 配置
+                    </button>
+                </div>
+
+                <div class="panel-content ai-content">
+                    <!-- 智能洞察 -->
+                    <div class="ai-tab-panel" id="ai-insights-panel">
+                        <div class="ai-empty" id="ai-insights-empty">
+                            <i class="fas fa-lightbulb"></i>
+                            <p>选择指标后获取智能洞察</p>
+                        </div>
+                        <div class="ai-insights-list" id="ai-insights-list"></div>
+                    </div>
+
+                    <!-- 深度分析 -->
+                    <div class="ai-tab-panel" id="ai-analysis-panel" style="display: none;">
+                        <div class="ai-options">
+                            <select class="ai-select" id="analysis-type">
+                                <option value="summary">摘要分析</option>
+                                <option value="detailed">详细分析</option>
+                                <option value="trend">趋势分析</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm btn-block" id="run-analysis-btn" disabled onclick="runAIAnalysis()">
+                                <i class="fas fa-play"></i> 开始分析
+                            </button>
+                        </div>
+                        <div class="ai-result" id="ai-analysis-result">
+                            <div class="ai-empty">
+                                <i class="fas fa-chart-pie"></i>
+                                <p>点击按钮进行深度分析</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BI报表 -->
+                    <div class="ai-tab-panel" id="ai-report-panel" style="display: none;">
+                        <div class="ai-options">
+                            <input type="text" class="ai-input" id="report-title-input" placeholder="输入报告标题">
+                            <select class="ai-select" id="report-type">
+                                <option value="detailed">详细报告</option>
+                                <option value="summary">摘要报告</option>
+                                <option value="trend">趋势分析报告</option>
+                            </select>
+                            <button class="btn btn-primary btn-sm btn-block" id="generate-report-btn" disabled onclick="generateBIReport()">
+                                <i class="fas fa-file-download"></i> 生成报表
+                            </button>
+                        </div>
+                        <div class="ai-result" id="ai-report-result">
+                            <div class="ai-empty">
+                                <i class="fas fa-file-alt"></i>
+                                <p>点击按钮生成BI报表</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AI配置 -->
+                    <div class="ai-tab-panel" id="ai-config-panel" style="display: none;">
+                        <div class="config-form">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-toggle-on"></i> 启用AI分析
+                                </label>
+                                <div class="form-switch">
+                                    <input type="checkbox" id="llm-enabled" onchange="toggleLLMEnabled()">
+                                    <span class="switch-label"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-cog"></i> 配置名称
+                                </label>
+                                <input type="text" class="form-input" id="llm-config-name" placeholder="输入配置名称">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-list"></i> 配置列表
+                                </label>
+                                <div class="config-selector">
+                                    <select class="form-select" id="llm-config-select" onchange="onConfigSelectChange()">
+                                        <option value="">选择配置...</option>
+                                    </select>
+                                    <button class="btn btn-xs btn-success" onclick="addNewConfig()">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                    <button class="btn btn-xs btn-danger" onclick="deleteCurrentConfig()" id="btn-delete-config" disabled>
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-brain"></i> 大模型提供商
+                                </label>
+                                <select class="form-select" id="llm-provider" onchange="onProviderChange()">
+                                    <option value="openai">OpenAI</option>
+                                    <option value="claude">Anthropic Claude</option>
+                                    <option value="zhipu">智谱AI</option>
+                                    <option value="qwen">阿里通义千问</option>
+                                    <option value="deepseek">深度求索</option>
+                                    <option value="siliconflow">SiliconFlow</option>
+                                    <option value="spark">讯飞星火</option>
+                                    <option value="custom">自定义API</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-key"></i> API密钥
+                                </label>
+                                <input type="password" class="form-input" id="llm-api-key" placeholder="输入API密钥">
+                                <button class="form-toggle-password" onclick="togglePassword('llm-api-key')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="form-group" id="llm-api-secret-group" style="display: none;">
+                                <label class="form-label">
+                                    <i class="fas fa-lock"></i> API密钥(Secret)
+                                </label>
+                                <input type="password" class="form-input" id="llm-api-secret" placeholder="输入API密钥(Secret)">
+                                <button class="form-toggle-password" onclick="togglePassword('llm-api-secret')">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                            </div>
+
+                            <div class="form-group" id="llm-base-url-group">
+                                <label class="form-label">
+                                    <i class="fas fa-link"></i> API基础地址
+                                </label>
+                                <input type="text" class="form-input" id="llm-base-url" placeholder="https://api.example.com/v1">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-cube"></i> 模型名称
+                                </label>
+                                <select class="form-select" id="llm-model">
+                                    <option value="gpt-4o-mini">gpt-4o-mini</option>
+                                    <option value="gpt-4o">gpt-4o</option>
+                                    <option value="gpt-4">gpt-4</option>
+                                    <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="fas fa-sliders-h"></i> 参数设置
+                                </label>
+                                <div class="params-row">
+                                    <div class="param-item">
+                                        <span class="param-label">最大Token</span>
+                                        <input type="number" class="param-input" id="llm-max-tokens" value="2000" min="100" max="8000">
+                                    </div>
+                                    <div class="param-item">
+                                        <span class="param-label">温度</span>
+                                        <input type="number" class="param-input" id="llm-temperature" value="0.7" min="0" max="2" step="0.1">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="config-actions">
+                                <button class="btn btn-secondary btn-sm btn-block" onclick="loadLLMConfig()">
+                                    <i class="fas fa-download"></i> 加载配置
+                                </button>
+                                <button class="btn btn-primary btn-sm btn-block" onclick="saveLLMConfig()">
+                                    <i class="fas fa-save"></i> 保存配置
+                                </button>
+                                <button class="btn btn-info btn-sm btn-block" onclick="testLLMConnection()">
+                                    <i class="fas fa-wifi"></i> 测试连接
+                                </button>
+                            </div>
+
+                            <div class="config-status" id="config-status" style="display: none;">
+                                <div class="status-icon" id="status-icon"></div>
+                                <div class="status-message" id="status-message"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
